@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const indexRouter = require('./routes/index');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3333;
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 
 // Create http server
 const server = app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
+    console.log(`Server running at http://${require('os').hostname()}:${PORT}/`);
 });
 
 // Create WebSocket server attached to http server

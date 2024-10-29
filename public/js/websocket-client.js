@@ -3,6 +3,8 @@ const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const wsUrl = `${wsProtocol}//${window.location.host}`;
 const ws = new WebSocket(wsUrl);
 
+console.log(wsUrl);
+
 ws.onopen = function() {
     console.log('Connected to server');
     // 可以添加一个连接状态指示
