@@ -57,13 +57,17 @@ wss.on('connection', function connection(ws) {
 
 // add interval to clean inactive clients
 const interval = setInterval(function ping() {
+    console.log('Before cleanup - clients count:', wss.clients.size);
     wss.clients.forEach(function each(ws) {
         if (ws.isAlive === false) {
-            return ws.terminate();
+            console.log('Terminating inactive client');
+            ws.terminate();
+            return;
         }
         ws.isAlive = false;
         ws.ping();
     });
+    console.log('After cleanup - clients count:', wss.clients.size);
 }, 30000);
 
 wss.on('close', function close() {
