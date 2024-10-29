@@ -22,35 +22,5 @@
     <div class="row">
       <span class="text-muted small">alphasec © 2024. All rights reserved.</span>
     </div>
-    <!-- 添加一些用于测试的简单UI元素 -->
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
-    
-    <div id="messages"></div>
-
-    <!-- 引入 WebSocket 客户端代码 -->
-    <script src="/js/websocket-client.js"></script>
-    
-    <!-- 添加处理消息的代码 -->
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value;
-            
-            if (message) {
-                // 使用 websocket-client.js 中定义的 ws 对象发送消息
-                ws.send(message);
-                input.value = '';
-            }
-        }
-
-        // 重写 onmessage 处理函数来显示消息
-        ws.onmessage = function(event) {
-            const messagesDiv = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.textContent = event.data;
-            messagesDiv.appendChild(messageElement);
-        };
-    </script>
   </body>
 </html>
