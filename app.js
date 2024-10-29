@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const WebSocket = require('ws');
+// const WebSocket = require('ws');
 const indexRouter = require('./routes/index');
 
 const app = express();
@@ -22,4 +22,4 @@ const server = app.listen(PORT, () => {
 });
 
 // Create WebSocket server attached to http server
-const wss = new WebSocket.Server({ server });
+//const wss = new WebSocket.Server({ server });
