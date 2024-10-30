@@ -1,75 +1,23 @@
 const express = require('express');
+const http = require('http');
 const path = require('path');
-const WebSocket = require('ws');
-const indexRouter = require('./routes/index');
 
 const app = express();
-const PORT = 3000;
+const server = http.createServer(app);
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+// middleware
+app.use(express.static('public'));
+app.use(express.json());
 
-// Use the router for handling routes
+// main router
+const indexRouter = require('./routes/index');
 app.use('/', indexRouter);
 
-// Catch-all route for handling 404 errors
-app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-});
+// mount RTC service
+const rtcServer = require('./services/rtc/rtc-server');
+rtcServer.init(server, '/rtc'); // mount RTC service at /rtc path
 
-const server = app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
-
-// Create WebSocket server attached to http server
-const wss = new WebSocket.Server({ server });
-
-wss.on('connection', function connection(ws) {
-    console.log('New client connected');
-
-    // add a property to identify if client is active
-    ws.isAlive = true;
-
-    ws.on('message', function incoming(message) {
-        // get active clients and broadcast
-        const activeClients = Array.from(wss.clients)
-            .filter(client => client !== ws && 
-                    client.readyState === WebSocket.OPEN &&
-                    client.isAlive);
-        
-        // batch send messages to active clients
-        if (activeClients.length > 0) {
-            const data = Buffer.from(message);
-            activeClients.forEach(client => client.send(data));
-        }
-    });
-
-    // handle ping/pong to check client status
-    ws.on('pong', () => {
-        ws.isAlive = true;
-    });
-
-    ws.on('close', function () {
-        ws.isAlive = false;
-        console.log('Client disconnected');
-    });
-});
-
-// add interval to clean inactive clients
-const interval = setInterval(function ping() {
-    console.log('Before cleanup - clients count:', wss.clients.size);
-    wss.clients.forEach(function each(ws) {
-        if (ws.isAlive === false) {
-            console.log('Terminating inactive client');
-            ws.terminate();
-            return;
-        }
-        ws.isAlive = false;
-        ws.ping();
-    });
-    console.log('After cleanup - clients count:', wss.clients.size);
-}, 30000);
-
-wss.on('close', function close() {
-    clearInterval(interval);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`Main server running at http://localhost:${PORT}/`);
 });
