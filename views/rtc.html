@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Broadcast Demo</title>
+</head>
+<body>
+    <h1>Broadcast Demo</h1>
+    <div id="controls">
+        <button id="connect">Connect</button>
+        <input type="text" id="message" placeholder="Enter message">
+        <button id="send">Broadcast Message</button>
+    </div>
+    <div id="status"></div>
+    <div id="messages"></div>
+
+    <script>
+        const peerId = Math.random().toString(36).substr(2, 9);
+        let ws;
+
+        function connectToSignalingServer() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/rtc-server?peerId=${peerId}`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                document.getElementById('status').textContent = `Connected as: ${peerId}`;
+                console.log('Connected to signaling server');
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                displayMessage(message);
+            };
+
+            ws.onclose = () => {
+                document.getElementById('status').textContent = 'Disconnected';
+            };
+        }
+
+        function broadcastMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const messageInput = document.getElementById('message');
+                const message = {
+                    type: 'broadcast',
+                    payload: messageInput.value
+                };
+                ws.send(JSON.stringify(message));
+                
+                // display own message
+                displayMessage({
+                    type: 'broadcast',
+                    fromPeerId: peerId,
+                    payload: messageInput.value
+                });
+                
+                messageInput.value = '';
+            }
+        }
+
+        function displayMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${message.fromPeerId}: ${message.payload}`;
+            messagesDiv.appendChild(messageElement);
+            // auto scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // event listeners
+        document.getElementById('connect').onclick = connectToSignalingServer;
+        document.getElementById('send').onclick = broadcastMessage;
+        document.getElementById('message').onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                broadcastMessage();
+            }
+        };
+
+        // cleanup
+        window.onbeforeunload = () => {
+            if (ws) {
+                ws.close();
+            }
+        };
+    </script>
+
+    <style>
+        #messages {
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #message {
+            width: 300px;
+            padding: 5px;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+</html> 
