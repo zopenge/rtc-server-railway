@@ -36,13 +36,6 @@ merge_to_master() {
         exit 1
     fi
     
-    echo "Pushing changes to master..."
-    if ! git push origin master; then
-        echo "Failed to push to master"
-        git checkout $current_branch
-        exit 1
-    fi
-    
     # switch back to original branch
     echo "Switching back to $current_branch..."
     if ! git checkout $current_branch; then
