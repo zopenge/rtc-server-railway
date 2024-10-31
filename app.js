@@ -18,16 +18,18 @@ const rtcServer = require('./services/rtc/rtc-server');
 const rtcRouter = rtcServer.init(server, '/rtc'); // ensure mountPath is passed
 app.use('/rtc', rtcRouter);  // use the router
 
-// ensure process and process.env exist
-if (typeof process === 'undefined') {
-    global.process = {};
-}
-if (!process.env) {
-    process.env = {};
-}
+// // ensure process and process.env exist
+// if (typeof process === 'undefined') {
+//     global.process = {};
+// }
+// if (!process.env) {
+//     process.env = {};
+// }
 
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+// const PORT = process.env.PORT || 3000;
+// const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = 3000;
+const NODE_ENV = 'development';
 
 server.listen(PORT, () => {
     if (NODE_ENV === 'production') {
