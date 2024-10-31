@@ -14,17 +14,42 @@ merge_to_master() {
     fi
     
     # checkout master and pull latest
-    git checkout master && \
-    git pull origin master && \
+    echo "Switching to master branch..."
+    if ! git checkout master; then
+        echo "Failed to checkout master branch"
+        exit 1
+    fi
     
-    # merge specified branch or current branch
-    git merge ${BRANCH:-$current_branch} && \
-    git push origin master && \
+    echo "Pulling latest changes from master..."
+    if ! git pull origin master; then
+        echo "Failed to pull from master"
+        git checkout $current_branch
+        exit 1
+    fi
+    
+    # merge specified branch
+    echo "Merging ${BRANCH:-$current_branch} into master..."
+    if ! git merge ${BRANCH:-$current_branch}; then
+        echo "Merge failed"
+        git checkout $current_branch
+        exit 1
+    fi
+    
+    echo "Pushing changes to master..."
+    if ! git push origin master; then
+        echo "Failed to push to master"
+        git checkout $current_branch
+        exit 1
+    fi
     
     # switch back to original branch
-    git checkout $current_branch
+    echo "Switching back to $current_branch..."
+    if ! git checkout $current_branch; then
+        echo "Failed to switch back to $current_branch"
+        exit 1
+    fi
     
-    echo "Successfully merged to master and switched back to $current_branch"
+    echo "✅ Successfully merged to master and switched back to $current_branch"
 }
 
 # execute function based on command argument
