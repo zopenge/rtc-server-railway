@@ -6,8 +6,8 @@ merge_to_master() {
     current_branch=$(git symbolic-ref --short HEAD)
     echo "📍 Current branch: $current_branch"
     
-    # check if there are uncommitted changes
-    if ! git diff-index --quiet HEAD --; then
+    # check if there are uncommitted changes (excluding line ending changes)
+    if ! git diff --ignore-space-at-eol --quiet HEAD --; then
         echo "❌ You have uncommitted changes. Please commit or stash them first."
         echo "Modified files:"
         git status --porcelain
