@@ -18,7 +18,18 @@ const rtcServer = require('./services/rtc/rtc-server');
 const rtcRouter = rtcServer.init(server, '/rtc'); // ensure mountPath is passed
 app.use('/rtc', rtcRouter);  // use the router
 
+// ensure process.env exists
+if (!process.env) {
+    process.env = {};
+}
+
 const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
 server.listen(PORT, () => {
-    console.log(`Main server running at http://localhost:${PORT}/`);
+    if (NODE_ENV === 'production') {
+        console.log(`Server is running on port ${PORT}`);
+    } else {
+        console.log(`Development server running at http://localhost:${PORT}/`);
+    }
 });
