@@ -1,3 +1,5 @@
+const WebSocket = require('ws');
+
 function handleConnection(ws, wss) {
     console.log('New client connected');
     

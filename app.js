@@ -15,7 +15,8 @@ app.use('/', indexRouter);
 
 // mount RTC service
 const rtcServer = require('./services/rtc/rtc-server');
-rtcServer.init(server, '/rtc'); // mount RTC service at /rtc path
+const rtcRouter = rtcServer.init(server, '/rtc'); // ensure mountPath is passed
+app.use('/rtc', rtcRouter);  // use the router
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
