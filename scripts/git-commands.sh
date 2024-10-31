@@ -4,10 +4,11 @@
 merge_to_master() {
     # store current branch name
     current_branch=$(git symbolic-ref --short HEAD)
+    echo "📍 Current branch: $current_branch"
     
     # check if there are uncommitted changes
     if ! git diff-index --quiet HEAD --; then
-        echo "You have uncommitted changes. Please commit or stash them first."
+        echo "❌ You have uncommitted changes. Please commit or stash them first."
         echo "Modified files:"
         git status --porcelain
         exit 1
