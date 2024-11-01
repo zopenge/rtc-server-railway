@@ -99,3 +99,9 @@ Add secondary remote repository:
 ```sh
 git remote add secondary <SECONDARY_REPO_URL>
 ```
+
+Remove secondary remote repository:
+
+```sh
+git remote remove secondary
+```

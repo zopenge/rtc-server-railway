@@ -1,10 +1,17 @@
-const express = require('express');
-const path = require('path');
-const router = express.Router();
+const authRouter = require('./auth');
+const mainRouter = require('./main');
+const rtcServer = require('../services/rtc/rtc-server');
 
-// Serve the index.html file for the root route
-router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../views/index.html'));
-});
+function setupRoutes(app, server) {
+    // main routes
+    app.use('/', mainRouter);
+    
+    // auth routes
+    app.use('/auth', authRouter);
+    
+    // rtc routes
+    const rtcRouter = rtcServer.init(server, '/rtc');
+    app.use('/rtc', rtcRouter);
+}
 
-module.exports = router;
+module.exports = setupRoutes;
