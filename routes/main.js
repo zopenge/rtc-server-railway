@@ -20,7 +20,7 @@ router.get('/health', (req, res) => {
 
 // serve login page
 router.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/login.html'));
+    res.sendFile(path.join(__dirname, '../views/login.html'));
 });
 
 module.exports = router; 
