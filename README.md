@@ -93,3 +93,9 @@ Or modify the script to ignore line ending changes:
 # Use --ignore-space-at-eol flag
 git diff --ignore-space-at-eol --quiet HEAD --
 ```
+
+Add secondary remote repository:
+
+```sh
+git remote add secondary <SECONDARY_REPO_URL>
+```
