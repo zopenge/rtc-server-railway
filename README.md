@@ -105,3 +105,17 @@ Remove secondary remote repository:
 ```sh
 git remote remove secondary
 ```
+
+Enable CRLF in Git:
+
+1. Windows
+
+```sh
+git config --global core.autocrlf true
+```
+
+2. Mac/Linux
+
+```sh
+git config --global core.autocrlf input
+```
