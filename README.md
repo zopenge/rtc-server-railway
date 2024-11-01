@@ -71,6 +71,7 @@ git remote -v
 ```sh
 # Change to SSH URL
 git remote set-url origin git@github.com:zopenge/rtc-server-railway.git
+```
 
 #### 3. Uncommitted Changes Detection
 
@@ -108,13 +109,13 @@ git remote remove secondary
 
 Enable CRLF in Git:
 
-1. Windows
+- Windows
 
 ```sh
 git config --global core.autocrlf true
 ```
 
-2. Mac/Linux
+- Mac/Linux
 
 ```sh
 git config --global core.autocrlf input

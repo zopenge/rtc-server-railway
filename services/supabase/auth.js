@@ -4,8 +4,8 @@ const authService = {
     // check if supabase is enabled
     isEnabled: () => supabase.isEnabled(),
 
-    // handle user sign in
-    async signIn(email, password) {
+    // connect to database with credentials
+    async connect(email, password) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
@@ -15,31 +15,38 @@ const authService = {
         });
     },
 
-    // handle user sign up
-    async signUp(email, password) {
+    // handle user login
+    async login(userId) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
-        return await supabase.getClient().auth.signUp({
-            email,
-            password
-        });
+        const client = supabase.getClient();
+        
+        // get user data
+        const { data: user, error } = await client
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+            
+        if (error) throw error;
+        return user;
     },
 
-    // handle sign out
-    async signOut() {
-        if (!supabase.isEnabled()) {
-            throw new Error('Supabase is not configured');
-        }
-        return await supabase.getClient().auth.signOut();
-    },
-
-    // get current session
+    // handle database session
     async getSession() {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
         return await supabase.getClient().auth.getSession();
+    },
+
+    // disconnect from database
+    async disconnect() {
+        if (!supabase.isEnabled()) {
+            throw new Error('Supabase is not configured');
+        }
+        return await supabase.getClient().auth.signOut();
     }
 };
 

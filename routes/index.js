@@ -1,5 +1,6 @@
 const authRouter = require('./auth');
 const mainRouter = require('./main');
+const userRouter = require('./user');
 const rtcServer = require('../services/rtc/rtc-server');
 
 function setupRoutes(app, server) {
@@ -8,6 +9,9 @@ function setupRoutes(app, server) {
     
     // auth routes
     app.use('/auth', authRouter);
+    
+    // user routes
+    app.use('/user', userRouter);
     
     // rtc routes
     const rtcRouter = rtcServer.init(server, '/rtc');
