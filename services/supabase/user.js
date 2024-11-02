@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
 const userService = {
-    // register new user with email and password
+    // register new user and password with user data
     async register(username, password, userData = {}) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
@@ -42,17 +42,17 @@ const userService = {
         }
     },
 
-    // login with email and password
-    async login(email, password) {
+    // login with username and password
+    async login(username, password) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
 
-        // Get user by email
+        // Get user by username
         const { data: user, error } = await supabase.getClient()
             .from('users')
             .select('*')
-            .eq('email', email)
+            .eq('username', username)
             .single();
 
         if (error) throw error;
@@ -68,51 +68,34 @@ const userService = {
         return user;
     },
 
-    // get user by id
-    async getUser(userId) {
+    // get data by username
+    async getUser(username) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
-        const { data, error } = await supabase.getClient()
+        const { data: user, error } = await supabase.getClient()
             .from('users')
             .select('*')
-            .eq('id', userId)
+            .eq('username', username)
             .single();
 
         if (error) throw error;
+
+        // Remove sensitive data before returning
+        delete user.password_hash;
+
         return data;
     },
 
-    // create new user
-    async createUser(userData) {
-        if (!supabase.isEnabled()) {
-            throw new Error('Supabase is not configured');
-        }
-        const { data, error } = await supabase.getClient()
-            .from('users')
-            .insert([{
-                email: userData.email,
-                name: userData.name,
-                company: userData.company,
-                role: userData.role,
-                status: 'active'
-            }])
-            .select()
-            .single();
-
-        if (error) throw error;
-        return data;
-    },
-
-    // update user
-    async updateUser(userId, userData) {
+    // update user by username
+    async updateUser(username, userData) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
         const { data, error } = await supabase.getClient()
             .from('users')
             .update(userData)
-            .eq('id', userId)
+            .eq('username', username)
             .select()
             .single();
 
