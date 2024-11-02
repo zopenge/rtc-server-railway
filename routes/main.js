@@ -4,10 +4,7 @@ const path = require('path');
 
 // home route
 router.get('/', (req, res) => {
-    res.json({ 
-        message: 'RTC Server is running',
-        timestamp: new Date().toISOString()
-    });
+    res.sendFile(path.join(__dirname, '../views/index.html'));
 });
 
 // health check route

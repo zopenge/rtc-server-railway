@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -92,6 +93,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="tabs">
@@ -131,17 +133,21 @@
     </div>
 
     <script>
+        // Define tab buttons
+        const loginBtn = document.querySelector('[data-form="login"]');
+        const signupBtn = document.querySelector('[data-form="register"]');
+
         // tab switching
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 // update active tab
                 document.querySelector('.tab.active').classList.remove('active');
                 tab.classList.add('active');
-                
+
                 // update active form
                 document.querySelector('.form.active').classList.remove('active');
                 document.getElementById(`${tab.dataset.form}Form`).classList.add('active');
-                
+
                 // clear errors
                 document.querySelectorAll('.error').forEach(error => {
                     error.style.display = 'none';
@@ -154,7 +160,7 @@
             e.preventDefault();
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
-            
+
             try {
                 const response = await fetch('/user/login', {
                     method: 'POST',
@@ -163,7 +169,7 @@
                     },
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await response.json();
                 if (data.success) {
                     window.location.href = '/';  // redirect to home page
@@ -183,14 +189,14 @@
             const username = document.getElementById('registerUsername').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            
+
             if (password !== confirmPassword) {
                 const errorDiv = document.getElementById('registerError');
                 errorDiv.textContent = 'Passwords do not match';
                 errorDiv.style.display = 'block';
                 return;
             }
-            
+
             try {
                 const response = await fetch('/user/register', {
                     method: 'POST',
@@ -199,7 +205,7 @@
                     },
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await response.json();
                 if (data.success) {
                     // switch to login tab
@@ -213,6 +219,21 @@
                 errorDiv.style.display = 'block';
             }
         });
+
+        // Handle hash in URL to show correct tab
+        window.addEventListener('load', () => {
+            // Get hash from URL (e.g. #login or #register)
+            const hash = window.location.hash;
+
+            if (hash === '#register') {
+                // Trigger register tab
+                signupBtn.click();
+            } else {
+                // Default to login tab
+                loginBtn.click();
+            }
+        });
     </script>
 </body>
-</html> 
+
+</html>
