@@ -13,7 +13,7 @@ const app = express();
 const server = http.createServer(app);
 
 const pool = new Pool({
-    connectionString: 'your-supabase-connection-string',
+    connectionString: config.supabase.url,
 });
 
 const secret = crypto.randomBytes(32).toString('hex');
@@ -21,10 +21,15 @@ const secret = crypto.randomBytes(32).toString('hex');
 app.use(session({
     store: new PGStore({
         pool: pool,
+        tableName: 'session'
     }),
     secret: secret,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        secure: config.nodeEnv === 'production'
+    }
 }));
 
 // setup middleware

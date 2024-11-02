@@ -19,6 +19,7 @@
   },
   "scripts": {
     "start": "node app.js",
+    "prod:win": "set NODE_ENV=production && node app.js",
     "push-master": "git push origin master && git push secondary master",
     "merge-to-master": "bash scripts/git-commands.sh merge-to-master"
   }
