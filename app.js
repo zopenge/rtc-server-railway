@@ -1,8 +1,4 @@
 const express = require('express');
-const session = require("express-session");
-const PGStore = require('connect-pg-simple')(session);
-const { Pool } = require('pg');
-const crypto = require('crypto');
 const http = require('http');
 const config = require('./config');
 const setupMiddleware = require('./middleware');
@@ -11,26 +7,6 @@ const setupRoutes = require('./routes');
 // create express app and http server
 const app = express();
 const server = http.createServer(app);
-
-const pool = new Pool({
-    connectionString: config.supabase.url,
-});
-
-const secret = crypto.randomBytes(32).toString('hex');
-
-app.use(session({
-    store: new PGStore({
-        pool: pool,
-        tableName: 'session'
-    }),
-    secret: secret,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        secure: config.nodeEnv === 'production'
-    }
-}));
 
 // setup middleware
 setupMiddleware(app);

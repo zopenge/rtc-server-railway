@@ -68,7 +68,7 @@ const config = {
     // session config
     session: {
         secret: argv.session_secret || getEnvVar('SESSION_SECRET', defaultSecret),
-        secure: (argv.node_env || getEnvVar('NODE_ENV')) === 'production'
+        secure: (getEnvVar('PROD_ENV') || argv.node_env || getEnvVar('NODE_ENV')) === 'production'
     }
 };
 
