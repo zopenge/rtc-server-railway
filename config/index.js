@@ -4,6 +4,9 @@ const crypto = require('node:crypto');
 // generate random secret for session
 const defaultSecret = crypto.randomBytes(32).toString('hex');
 
+// add dotenv config as early as possible
+require('dotenv').config()
+
 // setup command line argument parser
 const argv = yargs
     .options({
@@ -49,7 +52,7 @@ const argv = yargs
 const getEnvVar = (key, defaultValue = undefined) => 
     ((process.env || {})[key] || defaultValue);
 
-// create configuration with fallbacks
+// create configuration with fallbacks, checking both CLI args and .env
 const config = {
     // server config
     port: argv.port || getEnvVar('PORT', 3000),
@@ -57,14 +60,14 @@ const config = {
 
     // supabase config (optional)
     supabase: {
-        enabled: !!(argv.supabase_url && argv.supabase_key) || !!(getEnvVar('SUPABASE_URL') && getEnvVar('SUPABASE_ANON_KEY')),
+        enabled: !!(argv.supabase_url && argv.supabase_key) || !!(getEnvVar('SUPABASE_URL') && getEnvVar('SUPABASE_KEY')),
         url: argv.supabase_url || getEnvVar('SUPABASE_URL'),
-        anonKey: argv.supabase_key || getEnvVar('SUPABASE_ANON_KEY')
+        key: argv.supabase_key || getEnvVar('SUPABASE_KEY')
     },
 
     // session config
     session: {
-        secret: argv.session_secret || getEnvVar('SESSION_SECRET'),
+        secret: argv.session_secret || getEnvVar('SESSION_SECRET', defaultSecret),
         secure: (argv.node_env || getEnvVar('NODE_ENV')) === 'production'
     }
 };
@@ -76,7 +79,7 @@ console.log('Server configuration:', {
     supabase: {
         enabled: config.supabase.enabled,
         url: config.supabase.enabled ? config.supabase.url : 'not configured',
-        anonKey: config.supabase.enabled ? '***' : 'not configured'
+        key: config.supabase.enabled ? '***' : 'not configured'
     },
     session: {
         secret: '***',  // hide session secret

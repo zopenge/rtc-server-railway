@@ -6,7 +6,7 @@ let supabase = null;
 if (config.supabase.enabled) {
     supabase = createClient(
         config.supabase.url, 
-        config.supabase.anonKey
+        config.supabase.key
     );
 }
 
