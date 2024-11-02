@@ -9,12 +9,6 @@ const authService = require('./services/supabase/auth');
 const app = express();
 const server = http.createServer(app);
 
-// Wait for database connection
-authService.signInWithGithub().then(async () => {
-    const user = await authService.getUser();
-    console.log(user);
-});
-
 // setup middleware
 setupMiddleware(app);
 
