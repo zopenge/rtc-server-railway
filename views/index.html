@@ -1,64 +1,358 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DevTools Hub</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
-  </head>
-  <body>
-    <nav class="navbar">
-      <div class="nav-brand">
-        <span class="gradient-text">DevTools Hub</span>
-      </div>
-      <div class="nav-buttons">
-        <button class="login-btn" onclick="window.location.href='/login#login'">Login</button>
-        <button class="signup-btn" onclick="window.location.href='/login#register'">Sign Up</button>
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Management</title>
+    <script src="/js/i18n.js"></script>
+    <script src="/locales/en.js"></script>
+    <script src="/locales/zh.js"></script>
+    <style>
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            z-index: 1000;
+        }
+
+        .nav-right {
+            position: absolute;
+            right: 20px;
+            top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lang-select {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .lang-current {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .lang-name {
+            font-size: 14px;
+        }
+
+        .arrow-down {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            padding: 0;
+            list-style: none;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 120px;
+        }
+
+        .lang-dropdown.show {
+            display: block;
+        }
+
+        .lang-dropdown li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .lang-dropdown li:hover {
+            background: #f5f5f5;
+        }
+
+        .flag {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            height: 36px;
+        }
+
+        .auth-buttons button {
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 34px;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: #333;
+            border-color: #ddd;
+        }
+
+        .register-btn {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .login-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .register-btn:hover {
+            background: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .login-btn:active, .register-btn:active {
+            transform: translateY(1px);
+        }
+
+        .login-btn:focus, .register-btn:focus {
+            outline: none;
+            height: 36px;
+        }
+
+        .login-btn:visited, .register-btn:visited {
+            height: 36px;
+        }
+
+        #content {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .auth-buttons button span {
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-right">
+            <div class="lang-select">
+                <div class="lang-current" onclick="toggleLangDropdown()">
+                    <img id="currentFlag" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/gb.svg" 
+                         class="flag" alt="English">
+                    <span class="lang-name">English</span>
+                    <span class="arrow-down">▼</span>
+                </div>
+                <ul id="langDropdown" class="lang-dropdown">
+                    <li data-lang="en" onclick="changeLang('en')">
+                        <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/gb.svg" class="flag" alt="English">
+                        <span>English</span>
+                    </li>
+                    <li data-lang="zh" onclick="changeLang('zh')">
+                        <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cn.svg" class="flag" alt="中文">
+                        <span>中文</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="auth-buttons">
+                <button type="button" class="login-btn" onclick="showLogin()">
+                    <span id="loginText"></span>
+                </button>
+                <button type="button" class="register-btn" onclick="showRegister()">
+                    <span id="registerText"></span>
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <main>
-      <section class="hero">
-        <div class="hero-content animate__animated animate__fadeIn">
-          <h1>Your Ultimate<br><span class="gradient-text">Developer Toolkit</span></h1>
-          <p>All the essential tools you need in one place</p>
-          <div class="cta-buttons">
-            <button class="cta-btn">Get Started</button>
-            <button class="secondary-btn">Browse Tools</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="features">
-        <div class="feature-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🛠️</div>
-            <h3>Development Tools</h3>
-            <p>Essential tools for modern development</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Monitoring</h3>
-            <p>Real-time system monitoring</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Security</h3>
-            <p>Advanced security features</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Performance</h3>
-            <p>Optimization tools</p>
-          </div>
-        </div>
-      </section>
+    <main id="content">
+        <!-- content will be loaded here -->
     </main>
 
-    <footer>
-      <p>© 2024 DevTools Hub. All rights reserved.</p>
-    </footer>
-  </body>
+    <script>
+        const content = document.getElementById('content');
+        const currentFlag = document.getElementById('currentFlag');
+
+        // supported languages configuration
+        const SUPPORTED_LANGUAGES = {
+            en: {
+                name: 'English',
+                flag: 'gb',
+                browserLangs: ['en', 'en-us', 'en-gb']
+            },
+            zh: {
+                name: '中文',
+                flag: 'cn',
+                browserLangs: ['zh', 'zh-cn', 'zh-tw', 'zh-hk']
+            }
+            // Add more languages like:
+            // ja: {
+            //     name: '日本語',
+            //     flag: 'jp',
+            //     browserLangs: ['ja', 'ja-jp']
+            // },
+            // ko: {
+            //     name: '한국어',
+            //     flag: 'kr',
+            //     browserLangs: ['ko', 'ko-kr']
+            // }
+        };
+
+        // initialize language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const browserLang = navigator.language.toLowerCase();
+            const defaultLang = detectLanguage(browserLang);
+            const lang = localStorage.getItem('lang') || defaultLang;
+            
+            // update initial display
+            const currentFlag = document.getElementById('currentFlag');
+            const langName = document.querySelector('.lang-name');
+            
+            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
+            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
+            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
+            
+            updateTexts();
+        });
+
+        // detect user's language based on browser language
+        function detectLanguage(browserLang) {
+            for (const [langCode, langData] of Object.entries(SUPPORTED_LANGUAGES)) {
+                if (langData.browserLangs.some(supported => 
+                    browserLang.startsWith(supported))) {
+                    return langCode;
+                }
+            }
+            return 'en'; // fallback to English
+        }
+
+        function toggleLangDropdown() {
+            const dropdown = document.getElementById('langDropdown');
+            dropdown.classList.toggle('show');
+            
+            // close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.lang-select')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        function changeLang(lang) {
+            if (!SUPPORTED_LANGUAGES[lang]) return;
+            
+            // update current language display
+            const currentFlag = document.getElementById('currentFlag');
+            const langName = document.querySelector('.lang-name');
+            
+            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
+            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
+            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
+            
+            // close dropdown
+            document.getElementById('langDropdown').classList.remove('show');
+            
+            // update language
+            localStorage.setItem('lang', lang);
+            window.dispatchEvent(new CustomEvent('languageChange', { detail: lang }));
+            updateTexts();
+        }
+
+        function updateTexts() {
+            document.getElementById('loginText').textContent = i18n.t('nav.login');
+            document.getElementById('registerText').textContent = i18n.t('nav.register');
+        }
+
+        async function loadPage(page) {
+            try {
+                const response = await fetch(`/${page}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const html = await response.text();
+                content.innerHTML = html;
+                
+                // trigger any initialization scripts
+                const scripts = content.getElementsByTagName('script');
+                Array.from(scripts).forEach(script => eval(script.innerHTML));
+            } catch (error) {
+                console.error('Failed to load page:', error);
+                content.innerHTML = '<p>Failed to load content. Please try again later.</p>';
+            }
+        }
+
+        function showLogin() {
+            loadPage('login');
+            // update URL without reload, use absolute path
+            history.pushState(null, '', '/auth/login');
+        }
+
+        function showRegister() {
+            loadPage('login');  // still load login page as it contains register form
+            history.pushState(null, '', '/auth/register');
+            // wait for login page to load before switching to register tab
+            setTimeout(() => {
+                const registerTab = document.querySelector('[data-form="register"]');
+                if (registerTab) {
+                    registerTab.click();
+                }
+            }, 100);
+        }
+
+        // handle back/forward buttons
+        window.addEventListener('popstate', () => {
+            const path = location.pathname;
+            let page = 'main';
+            
+            // map URLs to pages
+            const pageMap = {
+                '/auth/login': 'login',
+                '/auth/register': 'login',  // both use login page
+                '/': 'main'
+            };
+            
+            page = pageMap[path] || 'main';
+            loadPage(page);
+            
+            // if register page, switch to register tab after loading
+            if (path === '/auth/register') {
+                setTimeout(() => {
+                    const registerTab = document.querySelector('[data-form="register"]');
+                    if (registerTab) {
+                        registerTab.click();
+                    }
+                }, 100);
+            }
+        });
+    </script>
+</body>
 </html>

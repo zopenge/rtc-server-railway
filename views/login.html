@@ -97,20 +97,24 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <div class="tab active" data-form="login">Login</div>
-            <div class="tab" data-form="register">Register</div>
+            <div class="tab active" data-form="login">
+                <span id="loginTabText"></span>
+            </div>
+            <div class="tab" data-form="register">
+                <span id="registerTabText"></span>
+            </div>
         </div>
 
         <form id="loginForm" class="form active">
             <div class="input-group">
-                <label for="loginUsername">Username</label>
+                <label for="loginUsername" id="usernameLabel"></label>
                 <input type="text" id="loginUsername" required>
             </div>
             <div class="input-group">
-                <label for="loginPassword">Password</label>
+                <label for="loginPassword" id="passwordLabel"></label>
                 <input type="password" id="loginPassword" required>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" id="loginButton"></button>
             <div class="error" id="loginError"></div>
         </form>
 
@@ -133,6 +137,22 @@
     </div>
 
     <script>
+        function updateTexts() {
+            // update all text content
+            document.getElementById('loginTabText').textContent = i18n.t('auth.loginTab');
+            document.getElementById('registerTabText').textContent = i18n.t('auth.registerTab');
+            document.getElementById('usernameLabel').textContent = i18n.t('auth.username');
+            document.getElementById('passwordLabel').textContent = i18n.t('auth.password');
+            document.getElementById('loginButton').textContent = i18n.t('auth.loginButton');
+            // ... update other texts
+        }
+
+        // update texts when language changes
+        window.addEventListener('textsUpdated', updateTexts);
+
+        // initial update
+        updateTexts();
+
         // Define tab buttons
         const loginBtn = document.querySelector('[data-form="login"]');
         const signupBtn = document.querySelector('[data-form="register"]');
