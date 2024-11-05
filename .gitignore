@@ -106,6 +106,9 @@ dist
 # Session files
 sessions/
 
+# Upload files
+uploads/
+
 # Lock files
 package-lock.json
 pnpm-lock.yaml

@@ -116,6 +116,9 @@
         async function compressAndUpload(files) {
             progress.textContent = i18n.t('upload.compressing');
             
+            // Get root directory name from the first file's path
+            const rootDir = files[0]?.path.split('/')[1] || 'upload';
+            
             // create zip archive
             const zip = new JSZip();
             files.forEach(({path, file}) => {
@@ -135,7 +138,7 @@
 
             // upload to server
             const formData = new FormData();
-            formData.append('archive', content, 'upload.zip');
+            formData.append('archive', content, `${rootDir}.zip`);
 
             try {
                 progress.textContent = i18n.t('upload.uploading');
