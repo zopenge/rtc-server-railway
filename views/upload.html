@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resource Upload</title>
+    <script src="/js/i18n.js"></script>
+    <script src="/locales/en.js"></script>
+    <script src="/locales/zh.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         .drop-zone {
@@ -136,7 +139,7 @@
 
             try {
                 progress.textContent = i18n.t('upload.uploading');
-                const response = await fetch('/upload', {
+                const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                 });

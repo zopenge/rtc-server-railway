@@ -31,6 +31,13 @@ const enTranslations = {
         loginFailed: "Login failed, please check your email and password",
         registerFailed: "Registration failed, please try again later",
         networkError: "Network error, please check your connection"
+    },
+    upload: {
+        dropzone: "Drop files here or click to select",
+        compressing: "Compressing files...",
+        uploading: "Uploading...",
+        success: "Upload successful!",
+        failed: "Upload failed: {error}"
     }
 };
 

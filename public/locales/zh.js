@@ -31,6 +31,13 @@ const zhTranslations = {
         loginFailed: '登录失败，请检查邮箱和密码',
         registerFailed: '注册失败，请稍后重试',
         networkError: '网络错误，请检查网络连接'
+    },
+    upload: {
+        dropzone: "拖放文件到这里或点击选择",
+        compressing: "正在压缩文件...",
+        uploading: "正在上传...",
+        success: "上传成功！",
+        failed: "上传失败：{error}"
     }
 };
 
