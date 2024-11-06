@@ -241,6 +241,9 @@
             langName.textContent = SUPPORTED_LANGUAGES[lang].name;
             
             updateTexts();
+            
+            // load welcome page by default
+            loadPage('welcome');
         });
 
         // detect user's language based on browser language
@@ -337,6 +340,7 @@
             const pageMap = {
                 '/auth/login': 'login',
                 '/auth/register': 'login',  // both use login page
+                '/welcome': 'welcome',      // add welcome page mapping
                 '/': 'main'
             };
             

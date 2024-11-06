@@ -38,6 +38,26 @@ const enTranslations = {
         uploading: "Uploading...",
         success: "Upload successful!",
         failed: "Upload failed: {error}"
+    },
+    welcome: {
+        public: {
+            title: "Welcome to Our Platform",
+            subtitle: "Discover our powerful features and tools",
+            features: {
+                1: {
+                    title: "File Management",
+                    text: "Upload, store, and manage your files securely in one place"
+                },
+                2: {
+                    title: "Real-time Collaboration",
+                    text: "Work together with your team members in real-time"
+                },
+                3: {
+                    title: "Cross-platform Support",
+                    text: "Access your content from any device, anywhere"
+                }
+            }
+        }
     }
 };
 

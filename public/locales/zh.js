@@ -38,6 +38,26 @@ const zhTranslations = {
         uploading: "正在上传...",
         success: "上传成功！",
         failed: "上传失败：{error}"
+    },
+    welcome: {
+        public: {
+            title: "欢迎使用我们的平台",
+            subtitle: "探索我们强大的功能和工具",
+            features: {
+                1: {
+                    title: "文件管理",
+                    text: "在一处安全地上传、存储和管理您的文件"
+                },
+                2: {
+                    title: "实时协作",
+                    text: "与团队成员实时协作"
+                },
+                3: {
+                    title: "跨平台支持",
+                    text: "随时随地从任何设备访问您的内容"
+                }
+            }
+        }
     }
 };
 
