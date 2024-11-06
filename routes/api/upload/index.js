@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const config = require('../../../config');
+const authMiddleware = require('../../../middleware/auth');
 
 const diskStorage = require('./disk-storage');
 const dbStorage = require('./db-storage');
@@ -13,7 +14,7 @@ const storage = config.debug ? diskStorage : dbStorage;
 console.log(`[Upload] Using ${config.debug ? 'disk' : 'database'} storage strategy`);
 
 // Handle file upload endpoint
-router.post('/', storage.upload.single('archive'), storage.handleUpload);
+router.post('/', authMiddleware, storage.upload.single('archive'), storage.handleUpload);
 
 router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../../../views/upload.html'));

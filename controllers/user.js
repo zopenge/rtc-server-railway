@@ -34,10 +34,24 @@ const userController = {
                 .setIssuer(issuer) // set token issuer
                 .sign(secret);
 
-            res.json({
-                success: true,
-                user,
-                token
+            // convert expiration time to milliseconds for cookie
+            const expireInMs = expirationTime.includes('h') 
+                ? parseInt(expirationTime) * 60 * 60 * 1000  // hours to ms
+                : parseInt(expirationTime) * 1000;           // seconds to ms
+            
+            // set http only cookie
+            res.cookie('token', token, {
+                httpOnly: true,                // prevent XSS attacks
+                secure: config.session.secure, // use secure in production
+                sameSite: 'strict',           // CSRF protection
+                expires: new Date(Date.now() + expireInMs),
+                path: '/'                      // cookie available for all paths
+            });
+            
+            res.json({ 
+                success: true, 
+                user
+                // token no longer sent in response body
             });
         } catch (error) {
             res.status(401).json({
@@ -71,6 +85,22 @@ const userController = {
         } catch (error) {
             res.status(400).json({ success: false, error: error.message });
         }
+    },
+
+    // add logout method
+    async logout(req, res) {
+        // clear the token cookie
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: config.session.secure,
+            sameSite: 'strict',
+            path: '/'
+        });
+
+        res.json({
+            success: true,
+            message: 'Logged out successfully'
+        });
     }
 };
 

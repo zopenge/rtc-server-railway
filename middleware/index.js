@@ -1,10 +1,14 @@
 const express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const FileStore = require('session-file-store')(session);
 const config = require('../config');
 
 // setup all middleware for express app
 function setupMiddleware(app) {
+    // add cookie parser middleware
+    app.use(cookieParser());
+
     // serve static files from public directory
     app.use(express.static('public'));
 
