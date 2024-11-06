@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login</title>
+    <script src="/js/i18n.js"></script>
+    <script src="/locales/en.js"></script>
+    <script src="/locales/zh.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -108,11 +111,11 @@
         <form id="loginForm" class="form active">
             <div class="input-group">
                 <label for="loginUsername" id="usernameLabel"></label>
-                <input type="text" id="loginUsername" required>
+                <input type="text" id="loginUsername" autocomplete="username" required>
             </div>
             <div class="input-group">
                 <label for="loginPassword" id="passwordLabel"></label>
-                <input type="password" id="loginPassword" required>
+                <input type="password" id="loginPassword" autocomplete="current-password" required>
             </div>
             <button type="submit" id="loginButton"></button>
             <div class="error" id="loginError"></div>
@@ -121,155 +124,20 @@
         <form id="registerForm" class="form">
             <div class="input-group">
                 <label for="registerUsername">Username</label>
-                <input type="text" id="registerUsername" required>
+                <input type="text" id="registerUsername" autocomplete="username" required>
             </div>
             <div class="input-group">
                 <label for="registerPassword">Password</label>
-                <input type="password" id="registerPassword" required>
+                <input type="password" id="registerPassword" autocomplete="new-password" required>
             </div>
             <div class="input-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" required>
+                <input type="password" id="confirmPassword" autocomplete="new-password" required>
             </div>
             <button type="submit">Register</button>
             <div class="error" id="registerError"></div>
         </form>
     </div>
-
-    <script>
-        function updateTexts() {
-            // update all text content
-            document.getElementById('loginTabText').textContent = i18n.t('auth.loginTab');
-            document.getElementById('registerTabText').textContent = i18n.t('auth.registerTab');
-            document.getElementById('usernameLabel').textContent = i18n.t('auth.username');
-            document.getElementById('passwordLabel').textContent = i18n.t('auth.password');
-            document.getElementById('loginButton').textContent = i18n.t('auth.loginButton');
-            
-            // update register form texts
-            document.querySelector('label[for="registerUsername"]').textContent = i18n.t('auth.username');
-            document.querySelector('label[for="registerPassword"]').textContent = i18n.t('auth.password');
-            document.querySelector('label[for="confirmPassword"]').textContent = i18n.t('auth.confirmPassword');
-            document.querySelector('#registerForm button').textContent = i18n.t('auth.registerButton');
-        }
-
-        // update texts when language changes
-        window.addEventListener('textsUpdated', updateTexts);
-
-        // initial update
-        updateTexts();
-
-        // Define tab buttons
-        const loginBtn = document.querySelector('[data-form="login"]');
-        const signupBtn = document.querySelector('[data-form="register"]');
-
-        // tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // update active tab
-                document.querySelector('.tab.active').classList.remove('active');
-                tab.classList.add('active');
-
-                // update active form
-                document.querySelector('.form.active').classList.remove('active');
-                document.getElementById(`${tab.dataset.form}Form`).classList.add('active');
-
-                // clear errors
-                document.querySelectorAll('.error').forEach(error => {
-                    error.style.display = 'none';
-                });
-            });
-        });
-
-        // handle login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-
-            try {
-                const response = await fetch('/user/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = '/';  // redirect to home page
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                const errorDiv = document.getElementById('loginError');
-                errorDiv.textContent = error.message || 'Login failed';
-                errorDiv.style.display = 'block';
-            }
-        });
-
-        // handle register
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('registerUsername').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password !== confirmPassword) {
-                const errorDiv = document.getElementById('registerError');
-                errorDiv.textContent = 'Passwords do not match';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('/user/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    // switch to login tab
-                    document.querySelector('[data-form="login"]').click();
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch (error) {
-                const errorDiv = document.getElementById('registerError');
-                errorDiv.textContent = error.message || 'Registration failed';
-                errorDiv.style.display = 'block';
-            }
-        });
-
-        // Handle hash in URL to show correct tab
-        window.addEventListener('load', () => {
-            // Get hash from URL (e.g. #login or #register)
-            const hash = window.location.hash;
-
-            if (hash === '#register') {
-                // Trigger register tab
-                signupBtn.click();
-            } else {
-                // Default to login tab
-                loginBtn.click();
-            }
-        });
-
-        // Register login page lifecycle
-        PageLifecycle.register('login', {
-            mount: () => {
-                window.addEventListener('textsUpdated', updateTexts);
-                updateTexts();
-            },
-            unmount: () => {
-                window.removeEventListener('textsUpdated', updateTexts);
-            }
-        });
-    </script>
 </body>
 
 </html>

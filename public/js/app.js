@@ -133,7 +133,7 @@ const App = (function () {
                 history.pushState(null, '', '/');
                 loadPage('welcome');
             });
-            history.pushState(null, '', '/auth/login');
+            history.pushState(null, '', '/user/login');
         },
 
         showRegister() {
@@ -141,7 +141,7 @@ const App = (function () {
                 history.pushState(null, '', '/');
                 loadPage('welcome');
             });
-            history.pushState(null, '', '/auth/register');
+            history.pushState(null, '', '/user/register');
             setTimeout(() => {
                 const registerTab = document.querySelector('[data-form="register"]');
                 if (registerTab) {
@@ -153,27 +153,44 @@ const App = (function () {
         handlePopState() {
             const path = location.pathname;
             const pageMap = {
-                '/auth/login': 'login',
-                '/auth/register': 'login',
+                '/user/login': 'login',
+                '/user/register': 'login',
                 '/welcome': 'welcome',
                 '/workspace': 'workspace',
                 '/': 'welcome'
             };
 
             const page = pageMap[path] || 'welcome';
-            loadPage(page);
-
-            if (path === '/auth/register') {
-                setTimeout(() => {
-                    const registerTab = document.querySelector('[data-form="register"]');
-                    if (registerTab) {
-                        registerTab.click();
-                    }
-                }, 100);
-            }
+            loadPage(page).then(() => {
+                // Add special handling for register page
+                if (path === '/user/register') {
+                    // Add small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        const registerTab = document.querySelector('[data-form="register"]');
+                        if (registerTab) {
+                            registerTab.click();
+                        }
+                    }, 100);
+                }
+                
+                // Add confirmation when leaving login/register page
+                if (path !== '/user/login' && path !== '/user/register') {
+                    window.removeEventListener('beforeunload', handleBeforeUnload);
+                } else {
+                    window.addEventListener('beforeunload', handleBeforeUnload);
+                }
+            });
         }
     };
 })();
+
+// Add beforeunload handler
+function handleBeforeUnload(e) {
+    // Cancel the event
+    e.preventDefault();
+    // Chrome requires returnValue to be set
+    e.returnValue = '';
+}
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => App.init());

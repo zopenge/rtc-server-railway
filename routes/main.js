@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const authMiddleware = require('../middleware/auth');
+
 // home route - serves the main landing page
 router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/index.html'));
