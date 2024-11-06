@@ -57,6 +57,7 @@ const config = {
     // server config
     port: argv.port || getEnvVar('PORT', 3000),
     nodeEnv: argv.node_env || getEnvVar('NODE_ENV', 'development'),
+    debug: (argv.node_env || getEnvVar('NODE_ENV', 'development')) === 'development',
 
     // supabase config (optional)
     supabase: {
@@ -76,6 +77,7 @@ const config = {
 console.log('Server configuration:', {
     port: config.port,
     nodeEnv: config.nodeEnv,
+    debug: config.debug,
     supabase: {
         enabled: config.supabase.enabled,
         url: config.supabase.enabled ? config.supabase.url : 'not configured',

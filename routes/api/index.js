@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const uploadRouter = require('./upload');
+const uploadRouter = require('./upload/index');
 const userRouter = require('./user');
 
 // Mount routes
