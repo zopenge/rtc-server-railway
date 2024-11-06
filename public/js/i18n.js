@@ -29,7 +29,15 @@ window.i18n = {
     updateLang(lang) {
         this.currentLang = lang;
         localStorage.setItem('lang', lang);
-        window.dispatchEvent(new CustomEvent('textsUpdated'));
+        
+        // Check if document is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                window.dispatchEvent(new CustomEvent('textsUpdated'));
+            });
+        } else {
+            window.dispatchEvent(new CustomEvent('textsUpdated'));
+        }
     }
 };
 

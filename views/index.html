@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resource Management</title>
+    <script src="/js/page-lifecycle.js"></script>
     <script src="/js/i18n.js"></script>
     <script src="/locales/en.js"></script>
     <script src="/locales/zh.js"></script>
+    <script src="/js/app.js"></script>
     <style>
         nav {
             position: fixed;
@@ -165,28 +167,28 @@
     <nav>
         <div class="nav-right">
             <div class="lang-select">
-                <div class="lang-current" onclick="toggleLangDropdown()">
+                <div class="lang-current">
                     <img id="currentFlag" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/gb.svg" 
                          class="flag" alt="English">
                     <span class="lang-name">English</span>
                     <span class="arrow-down">▼</span>
                 </div>
                 <ul id="langDropdown" class="lang-dropdown">
-                    <li data-lang="en" onclick="changeLang('en')">
+                    <li data-lang="en">
                         <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/gb.svg" class="flag" alt="English">
                         <span>English</span>
                     </li>
-                    <li data-lang="zh" onclick="changeLang('zh')">
+                    <li data-lang="zh">
                         <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cn.svg" class="flag" alt="中文">
                         <span>中文</span>
                     </li>
                 </ul>
             </div>
             <div class="auth-buttons">
-                <button type="button" class="login-btn" onclick="showLogin()">
+                <button type="button" class="login-btn">
                     <span id="loginText"></span>
                 </button>
-                <button type="button" class="register-btn" onclick="showRegister()">
+                <button type="button" class="register-btn">
                     <span id="registerText"></span>
                 </button>
             </div>
@@ -196,167 +198,5 @@
     <main id="content">
         <!-- content will be loaded here -->
     </main>
-
-    <script>
-        const content = document.getElementById('content');
-        const currentFlag = document.getElementById('currentFlag');
-
-        // supported languages configuration
-        const SUPPORTED_LANGUAGES = {
-            en: {
-                name: 'English',
-                flag: 'gb',
-                browserLangs: ['en', 'en-us', 'en-gb']
-            },
-            zh: {
-                name: '中文',
-                flag: 'cn',
-                browserLangs: ['zh', 'zh-cn', 'zh-tw', 'zh-hk']
-            }
-            // Add more languages like:
-            // ja: {
-            //     name: '日本語',
-            //     flag: 'jp',
-            //     browserLangs: ['ja', 'ja-jp']
-            // },
-            // ko: {
-            //     name: '한국어',
-            //     flag: 'kr',
-            //     browserLangs: ['ko', 'ko-kr']
-            // }
-        };
-
-        // initialize language on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const browserLang = navigator.language.toLowerCase();
-            const defaultLang = detectLanguage(browserLang);
-            const lang = localStorage.getItem('lang') || defaultLang;
-            
-            // update initial display
-            const currentFlag = document.getElementById('currentFlag');
-            const langName = document.querySelector('.lang-name');
-            
-            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
-            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
-            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
-            
-            updateTexts();
-            
-            // load welcome page by default
-            loadPage('welcome');
-        });
-
-        // detect user's language based on browser language
-        function detectLanguage(browserLang) {
-            for (const [langCode, langData] of Object.entries(SUPPORTED_LANGUAGES)) {
-                if (langData.browserLangs.some(supported => 
-                    browserLang.startsWith(supported))) {
-                    return langCode;
-                }
-            }
-            return 'en'; // fallback to English
-        }
-
-        function toggleLangDropdown() {
-            const dropdown = document.getElementById('langDropdown');
-            dropdown.classList.toggle('show');
-            
-            // close dropdown when clicking outside
-            document.addEventListener('click', function closeDropdown(e) {
-                if (!e.target.closest('.lang-select')) {
-                    dropdown.classList.remove('show');
-                    document.removeEventListener('click', closeDropdown);
-                }
-            });
-        }
-
-        function changeLang(lang) {
-            if (!SUPPORTED_LANGUAGES[lang]) return;
-            
-            // update current language display
-            const currentFlag = document.getElementById('currentFlag');
-            const langName = document.querySelector('.lang-name');
-            
-            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
-            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
-            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
-            
-            // close dropdown
-            document.getElementById('langDropdown').classList.remove('show');
-            
-            // update language
-            localStorage.setItem('lang', lang);
-            window.dispatchEvent(new CustomEvent('languageChange', { detail: lang }));
-            updateTexts();
-        }
-
-        function updateTexts() {
-            document.getElementById('loginText').textContent = i18n.t('nav.login');
-            document.getElementById('registerText').textContent = i18n.t('nav.register');
-        }
-
-        async function loadPage(page) {
-            try {
-                const response = await fetch(`/${page}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const html = await response.text();
-                content.innerHTML = html;
-                
-                // trigger any initialization scripts
-                const scripts = content.getElementsByTagName('script');
-                Array.from(scripts).forEach(script => eval(script.innerHTML));
-            } catch (error) {
-                console.error('Failed to load page:', error);
-                content.innerHTML = '<p>Failed to load content. Please try again later.</p>';
-            }
-        }
-
-        function showLogin() {
-            loadPage('login');
-            // update URL without reload, use absolute path
-            history.pushState(null, '', '/auth/login');
-        }
-
-        function showRegister() {
-            loadPage('login');  // still load login page as it contains register form
-            history.pushState(null, '', '/auth/register');
-            // wait for login page to load before switching to register tab
-            setTimeout(() => {
-                const registerTab = document.querySelector('[data-form="register"]');
-                if (registerTab) {
-                    registerTab.click();
-                }
-            }, 100);
-        }
-
-        // handle back/forward buttons
-        window.addEventListener('popstate', () => {
-            const path = location.pathname;
-            let page = 'main';
-            
-            // map URLs to pages
-            const pageMap = {
-                '/auth/login': 'login',
-                '/auth/register': 'login',  // both use login page
-                '/welcome': 'welcome',      // add welcome page mapping
-                '/': 'main'
-            };
-            
-            page = pageMap[path] || 'main';
-            loadPage(page);
-            
-            // if register page, switch to register tab after loading
-            if (path === '/auth/register') {
-                setTimeout(() => {
-                    const registerTab = document.querySelector('[data-form="register"]');
-                    if (registerTab) {
-                        registerTab.click();
-                    }
-                }, 100);
-            }
-        });
-    </script>
 </body>
 </html>

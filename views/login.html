@@ -144,7 +144,12 @@
             document.getElementById('usernameLabel').textContent = i18n.t('auth.username');
             document.getElementById('passwordLabel').textContent = i18n.t('auth.password');
             document.getElementById('loginButton').textContent = i18n.t('auth.loginButton');
-            // ... update other texts
+            
+            // update register form texts
+            document.querySelector('label[for="registerUsername"]').textContent = i18n.t('auth.username');
+            document.querySelector('label[for="registerPassword"]').textContent = i18n.t('auth.password');
+            document.querySelector('label[for="confirmPassword"]').textContent = i18n.t('auth.confirmPassword');
+            document.querySelector('#registerForm button').textContent = i18n.t('auth.registerButton');
         }
 
         // update texts when language changes
@@ -251,6 +256,17 @@
             } else {
                 // Default to login tab
                 loginBtn.click();
+            }
+        });
+
+        // Register login page lifecycle
+        PageLifecycle.register('login', {
+            mount: () => {
+                window.addEventListener('textsUpdated', updateTexts);
+                updateTexts();
+            },
+            unmount: () => {
+                window.removeEventListener('textsUpdated', updateTexts);
             }
         });
     </script>

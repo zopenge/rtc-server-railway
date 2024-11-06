@@ -76,27 +76,5 @@
         </div>
     </div>
 
-    <script>
-        // update all text content based on current language
-        function updateTexts() {
-            // update welcome texts
-            document.getElementById('welcomeTitle').textContent = i18n.t('welcome.public.title');
-            document.getElementById('welcomeSubtitle').textContent = i18n.t('welcome.public.subtitle');
-            
-            // update feature descriptions
-            document.getElementById('feature1Title').textContent = i18n.t('welcome.public.features.1.title');
-            document.getElementById('feature1Text').textContent = i18n.t('welcome.public.features.1.text');
-            document.getElementById('feature2Title').textContent = i18n.t('welcome.public.features.2.title');
-            document.getElementById('feature2Text').textContent = i18n.t('welcome.public.features.2.text');
-            document.getElementById('feature3Title').textContent = i18n.t('welcome.public.features.3.title');
-            document.getElementById('feature3Text').textContent = i18n.t('welcome.public.features.3.text');
-        }
-
-        // listen for language changes
-        window.addEventListener('textsUpdated', updateTexts);
-        
-        // initial text update
-        updateTexts();
-    </script>
 </body>
 </html> 

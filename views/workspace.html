@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace</title>
+    <script src="/js/i18n.js"></script>
+    <script src="/locales/en.js"></script>
+    <script src="/locales/zh.js"></script>
+    <style>
+        .workspace-container {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .action-button:hover {
+            background: #2980b9;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="workspace-container">
+        <div class="sidebar">
+            <h3 id="sidebarTitle"></h3>
+            <nav id="sidebarNav"></nav>
+        </div>
+        
+        <div class="main-content">
+            <div class="quick-actions">
+                <button class="action-button" onclick="location.href='/api/upload'" id="uploadButton"></button>
+                <button class="action-button" onclick="location.href='/rtc'" id="collaborateButton"></button>
+            </div>
+            
+            <div class="content-grid" id="contentGrid">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadWorkspace() {
+            try {
+                const response = await fetch('/api/user/info');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const userData = await response.json();
+                updateUI(userData);
+            } catch (error) {
+                console.error('Failed to load workspace:', error);
+            }
+        }
+
+        function updateUI(userData) {
+            document.getElementById('sidebarTitle').textContent = i18n.t('workspace.sidebar.title');
+            document.getElementById('uploadButton').textContent = i18n.t('workspace.actions.upload');
+            document.getElementById('collaborateButton').textContent = i18n.t('workspace.actions.collaborate');
+            
+            // Additional UI updates based on user data
+        }
+
+        // Register workspace page lifecycle
+        PageLifecycle.register('workspace', {
+            mount: () => {
+                window.addEventListener('textsUpdated', loadWorkspace);
+                loadWorkspace();
+            },
+            unmount: () => {
+                window.removeEventListener('textsUpdated', loadWorkspace);
+            }
+        });
+    </script>
+</body>
+</html> 

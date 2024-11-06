@@ -40,24 +40,43 @@ const zhTranslations = {
         failed: "上传失败：{error}"
     },
     welcome: {
-        public: {
-            title: "欢迎使用我们的平台",
-            subtitle: "探索我们强大的功能和工具",
-            features: {
-                1: {
-                    title: "文件管理",
-                    text: "在一处安全地上传、存储和管理您的文件"
-                },
-                2: {
-                    title: "实时协作",
-                    text: "与团队成员实时协作"
-                },
-                3: {
-                    title: "跨平台支持",
-                    text: "随时随地从任何设备访问您的内容"
-                }
+        title: "欢迎使用我们的平台",
+        subtitle: "探索我们强大的功能和工具",
+        features: {
+            1: {
+                title: "文件管理",
+                text: "在一处安全地上传、存储和管理您的文件"
+            },
+            2: {
+                title: "实时协作",
+                text: "与团队成员实时协作"
+            },
+            3: {
+                title: "跨平台支持",
+                text: "随时随地从任何设备访问您的内容"
             }
         }
+    },
+    workspace: {
+        sidebar: {
+            title: "导航",
+            files: "我的文件",
+            shared: "共享文件",
+            recent: "最近使用"
+        },
+        actions: {
+            upload: "上传文件",
+            collaborate: "开始协作"
+        }
+    },
+    auth: {
+        loginTab: "登录",
+        registerTab: "注册",
+        username: "用户名",
+        password: "密码",
+        loginButton: "登录",
+        registerButton: "注册",
+        confirmPassword: "确认密码"
     }
 };
 
