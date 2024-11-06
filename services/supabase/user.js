@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
 const userService = {
-    // register new user and password with user data
-    async register(username, password, userData = {}) {
+    // create new user and password with user data
+    async createUser(username, password, userData = {}) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
@@ -42,8 +42,8 @@ const userService = {
         }
     },
 
-    // login with username and password
-    async login(username, password) {
+    // get data by username and password
+    async getUser(username, password) {
         if (!supabase.isEnabled()) {
             throw new Error('Supabase is not configured');
         }
@@ -66,25 +66,6 @@ const userService = {
         delete user.password_hash;
 
         return user;
-    },
-
-    // get data by username
-    async getUser(username) {
-        if (!supabase.isEnabled()) {
-            throw new Error('Supabase is not configured');
-        }
-        const { data: user, error } = await supabase.getClient()
-            .from('users')
-            .select('*')
-            .eq('username', username)
-            .single();
-
-        if (error) throw error;
-
-        // Remove sensitive data before returning
-        delete user.password_hash;
-
-        return data;
     },
 
     // update user by username

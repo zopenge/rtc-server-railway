@@ -1,4 +1,5 @@
 const multer = require('multer');
+const fileService = require('../../../services/supabase/file');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -9,6 +10,10 @@ const handleUpload = async (req, res) => {
             throw new Error('No file uploaded');
         }
 
+        if (!req.user || !req.user.id) {
+            throw new Error('User not authenticated');
+        }
+
         const fileInfo = {
             originalName: req.file.originalname.toLowerCase(),
             mimeType: req.file.mimetype,
@@ -17,15 +22,17 @@ const handleUpload = async (req, res) => {
             uploadedAt: new Date()
         };
 
-        // TODO: Add database storage logic here
-        // const result = await db.files.create(fileInfo);
+        // Store file with user reference
+        const result = await fileService.createFile(fileInfo, req.user.id);
 
         res.json({
             success: true,
-            file: fileInfo.originalName,
+            file: result.original_name,
+            id: result.id,
             storage: 'database'
         });
     } catch (error) {
+        console.error('Upload error:', error);
         res.status(400).json({
             success: false,
             error: error.message

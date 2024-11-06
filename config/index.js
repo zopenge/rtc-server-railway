@@ -38,10 +38,16 @@ const argv = yargs
             type: 'string',
             description: 'Session secret key',
             default: defaultSecret
+        },
+        'jwt_secret': {
+            alias: 'j',
+            type: 'string',
+            description: 'JWT secret key',
+            default: defaultSecret
         }
     })
     .example('npm run start -- -p 3000')
-    .example('npm run start -- -p 3000 -u https://xxx.supabase.co -k your_key')
+    .example('npm run start -- -p 3000 -u https://xxx.supabase.co -k your_key -j your_jwt_secret')
     .epilogue('Supabase configuration is optional. If not provided, database features will be disabled.')
     .help()
     .alias('help', 'h')
@@ -49,7 +55,7 @@ const argv = yargs
     .argv;
 
 // safely get environment variable with fallback
-const getEnvVar = (key, defaultValue = undefined) => 
+const getEnvVar = (key, defaultValue = undefined) =>
     ((process.env || {})[key] || defaultValue);
 
 // create configuration with fallbacks, checking both CLI args and .env
@@ -70,6 +76,14 @@ const config = {
     session: {
         secret: argv.session_secret || getEnvVar('SESSION_SECRET', defaultSecret),
         secure: (getEnvVar('PROD_ENV') || argv.node_env || getEnvVar('NODE_ENV')) === 'production'
+    },
+
+    // jwt config
+    jwt: {
+        secret: argv.jwt_secret || getEnvVar('JWT_SECRET', defaultSecret),
+        expirationTime: getEnvVar('JWT_EXPIRATION', '24h'),
+        issuer: getEnvVar('JWT_ISSUER', 'unknown'),
+        algorithm: getEnvVar('JWT_ALGORITHM', 'HS256')
     }
 };
 
@@ -86,6 +100,12 @@ console.log('Server configuration:', {
     session: {
         secret: '***',  // hide session secret
         secure: config.session.secure
+    },
+    jwt: {
+        secret: '***',  // hide jwt secret
+        expirationTime: config.jwt.expirationTime,
+        issuer: config.jwt.issuer,
+        algorithm: config.jwt.algorithm
     }
 });
 

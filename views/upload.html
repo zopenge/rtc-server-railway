@@ -112,11 +112,8 @@
             await compressAndUpload(files);
         });
 
-        // compress files and upload to server
-        async function compressAndUpload(files) {
-            progress.textContent = i18n.t('upload.compressing');
-            
-            // Get root directory name from the first file's path
+        // compress files into a zip archive
+        async function compressFiles(files) {
             const rootDir = files[0]?.path.split('/')[1] || 'upload';
             
             // create zip archive
@@ -136,18 +133,33 @@
                 progress.textContent = `Compression progress: ${metadata.percent.toFixed(2)}%`;
             });
 
-            // upload to server
+            return {
+                content,
+                rootDir
+            };
+        }
+
+        // upload zip file to server
+        async function uploadArchive(content, rootDir) {
             const formData = new FormData();
             formData.append('archive', content, `${rootDir}.zip`);
 
-            try {
-                progress.textContent = i18n.t('upload.uploading');
-                const response = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+            progress.textContent = i18n.t('upload.uploading');
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
 
-                if (!response.ok) throw new Error('Upload failed');
+            if (!response.ok) throw new Error('Upload failed');
+            return response;
+        }
+
+        // main process function
+        async function compressAndUpload(files) {
+            try {
+                progress.textContent = i18n.t('upload.compressing');
+                const { content, rootDir } = await compressFiles(files);
+                await uploadArchive(content, rootDir);
                 progress.textContent = i18n.t('upload.success');
             } catch (error) {
                 progress.textContent = i18n.t('upload.failed', { error: error.message });
