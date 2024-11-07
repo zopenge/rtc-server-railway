@@ -1,47 +1,81 @@
-window.i18n = {
-    en: {},  // initialize language objects
-    zh: {},
-    currentLang: localStorage.getItem('lang') || 'en',
+class I18n {
+    constructor() {
+        this.translations = {};
+        this.games = {};
+        this.currentLang = this.detectLanguage();
+        this.updateUILanguage(this.currentLang);
+    }
 
-    t(key, params = {}) {
-        try {
-            const text = key.split('.').reduce((obj, k) => {
-                if (obj === undefined || obj === null) throw new Error();
-                return obj[k];
-            }, this[this.currentLang]);
-
-            if (text === undefined || text === null) {
-                console.warn(`Translation missing for key: ${key}`);
-                return key;
+    detectLanguage() {
+        const browserLang = navigator.language.toLowerCase();
+        const supportedLanguages = ['en', 'zh'];
+        
+        // Check if browser language matches any of our supported languages
+        for (const lang of supportedLanguages) {
+            if (browserLang.startsWith(lang)) {
+                return lang;
             }
-
-            return text.replace(/{(\w+)}/g, (_, k) => params[k] || '');
-        } catch (e) {
-            console.warn(`Translation missing for key: ${key}`);
-            return key;
         }
-    },
+        
+        return 'en'; // fallback to English
+    }
 
     register(lang, translations) {
-        this[lang] = translations;
-    },
-
-    updateLang(lang) {
-        this.currentLang = lang;
-        localStorage.setItem('lang', lang);
-        
-        // Check if document is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                window.dispatchEvent(new CustomEvent('textsUpdated'));
-            });
-        } else {
-            window.dispatchEvent(new CustomEvent('textsUpdated'));
+        this.translations[lang] = translations;
+        if (lang === this.currentLang) {
+            this.notifyTextsUpdated();
         }
     }
-};
+
+    registerGames(games) {
+        this.games = {
+            ...this.games,
+            ...games
+        };
+        this.notifyTextsUpdated();
+    }
+
+    setLanguage(lang) {
+        if (this.translations[lang]) {
+            this.currentLang = lang;
+            this.updateUILanguage(lang);
+            this.notifyTextsUpdated();
+            return true;
+        }
+        return false;
+    }
+
+    updateUILanguage(lang) {
+        // Update HTML lang attribute
+        document.documentElement.lang = lang;
+        
+        // Emit language change event
+        window.dispatchEvent(new CustomEvent('languageChanged', { 
+            detail: { lang } 
+        }));
+    }
+
+    t(key) {
+        const keys = key.split('.');
+        let value = this.translations[this.currentLang];
+        
+        for (const k of keys) {
+            if (value === undefined) break;
+            value = value[k];
+        }
+        
+        return value || key;
+    }
+
+    notifyTextsUpdated() {
+        window.dispatchEvent(new Event('textsUpdated'));
+    }
+}
+
+// Create global i18n instance
+window.i18n = new I18n();
 
 // listen for language changes
 window.addEventListener('languageChange', (e) => {
-    window.i18n.updateLang(e.detail);
+    window.i18n.setLanguage(e.detail);
 }); 

@@ -51,6 +51,39 @@ const App = (function () {
         }
     }
 
+    function populateLangDropdown() {
+        const dropdown = document.getElementById('langDropdown');
+        dropdown.innerHTML = Object.entries(SUPPORTED_LANGUAGES)
+            .map(([code, data]) => `
+                <li data-lang="${code}">
+                    <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${data.flag}.svg" 
+                         class="flag" alt="${data.name}">
+                    <span>${data.name}</span>
+                </li>
+            `).join('');
+
+        // Add event listeners after populating the dropdown
+        dropdown.querySelectorAll('li').forEach(li => {
+            li.addEventListener('click', (e) => {
+                const lang = e.currentTarget.dataset.lang;
+                App.changeLang(lang);
+            });
+        });
+    }
+
+    function updateLanguageUI(lang) {
+        if (!SUPPORTED_LANGUAGES[lang]) return;
+
+        const currentFlag = document.getElementById('currentFlag');
+        const langName = document.querySelector('.lang-name');
+
+        if (currentFlag && langName) {
+            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
+            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
+            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
+        }
+    }
+
     return {
         init() {
             // initialize DOM references first
@@ -62,34 +95,38 @@ const App = (function () {
 
             // initialize language
             const browserLang = navigator.language.toLowerCase();
-            const defaultLang = detectLanguage(browserLang);
-            const lang = localStorage.getItem('lang') || defaultLang;
+            const detectedLang = detectLanguage(browserLang);
+            const storedLang = localStorage.getItem('lang');
+            const initialLang = storedLang || detectedLang;
 
-            const currentFlag = document.getElementById('currentFlag');
-            const langName = document.querySelector('.lang-name');
+            // Set initial language in i18n system
+            i18n.setLanguage(initialLang);
+            localStorage.setItem('lang', initialLang);
 
-            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
-            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
-            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
+            // Update UI for initial language
+            updateLanguageUI(initialLang);
+
+            // Listen for language changes
+            window.addEventListener('languageChanged', (e) => {
+                const newLang = e.detail.lang;
+                localStorage.setItem('lang', newLang);
+                updateLanguageUI(newLang);
+                updateNavTexts();
+            });
 
             updateNavTexts();
             loadPage('welcome');
 
             // setup event listeners
             this.setupEventListeners();
+
+            // populate language dropdown
+            populateLangDropdown();
         },
 
         setupEventListeners() {
-            // language dropdown
+            // language dropdown toggle
             document.querySelector('.lang-current').addEventListener('click', this.toggleLangDropdown);
-
-            // language selection
-            document.querySelectorAll('.lang-dropdown li').forEach(li => {
-                li.addEventListener('click', (e) => {
-                    const lang = e.currentTarget.dataset.lang;
-                    this.changeLang(lang);
-                });
-            });
 
             // auth buttons
             document.querySelector('.login-btn').addEventListener('click', this.showLogin);
@@ -114,18 +151,8 @@ const App = (function () {
         changeLang(lang) {
             if (!SUPPORTED_LANGUAGES[lang]) return;
 
-            const currentFlag = document.getElementById('currentFlag');
-            const langName = document.querySelector('.lang-name');
-
-            currentFlag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${SUPPORTED_LANGUAGES[lang].flag}.svg`;
-            currentFlag.alt = SUPPORTED_LANGUAGES[lang].name;
-            langName.textContent = SUPPORTED_LANGUAGES[lang].name;
-
+            i18n.setLanguage(lang);
             document.getElementById('langDropdown').classList.remove('show');
-
-            localStorage.setItem('lang', lang);
-            window.dispatchEvent(new CustomEvent('languageChange', { detail: lang }));
-            updateNavTexts();
         },
 
         showLogin() {
