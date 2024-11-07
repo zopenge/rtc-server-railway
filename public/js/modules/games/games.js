@@ -1,10 +1,11 @@
 // Games module
-const GamesModule = (function() {
-    // private state and methods
-    const _games = new Map();
+window.GamesModule = {
+    // private state using closure
+    _games: new Map(),
 
-    function _renderGamesList(container) {
-        const gameCards = Array.from(_games.values()).map(game => `
+    // private methods (still accessible but with _ prefix to indicate private)
+    _renderGamesList(container) {
+        const gameCards = Array.from(this._games.values()).map(game => `
             <div class="game-card" data-game-id="${game.id}">
                 <div class="game-icon">${game.icon}</div>
                 <h3 class="game-title">${game.name}</h3>
@@ -25,24 +26,21 @@ const GamesModule = (function() {
                 Workspace.switchView('gameContent', { gameId });
             });
         });
-    }
+    },
 
     // public API
-    return {
-        // register a new game
-        registerGame(gameConfig) {
-            _games.set(gameConfig.id, gameConfig);
-        },
+    registerGame(gameConfig) {
+        this._games.set(gameConfig.id, gameConfig);
+    },
 
-        // render method required by workspace
-        render(params = {}) {
-            const container = document.getElementById('contentGrid');
-            _renderGamesList(container);
-        },
+    // render method required by workspace
+    render(params = {}) {
+        const container = document.getElementById('contentGrid');
+        this._renderGamesList(container);
+    },
 
-        // cleanup method (optional)
-        cleanup() {
-            // cleanup any resources if needed
-        }
-    };
-})(); 
+    // cleanup method (optional)
+    cleanup() {
+        // cleanup any resources if needed
+    }
+}; 
