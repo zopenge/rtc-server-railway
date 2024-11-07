@@ -1,65 +1,63 @@
 window.SceneEditorModule = {
     _state: {
         currentScene: null,
-        selectedObjects: new Set(),
-        viewMode: 'perspective'
+        selectedObjects: new Set()
     },
 
-    render(params = {}) {
-        const container = document.getElementById('contentGrid');
-        container.innerHTML = `
-            <div class="editor-container">
-                <div class="toolbar" id="sceneToolbar"></div>
-                <div class="main-content">
-                    <div class="preview-area" id="scenePreview"></div>
-                    <div class="property-panel" id="sceneProperties"></div>
-                </div>
-            </div>
-        `;
-
-        this._initComponents();
-        this._setupTools();
-        this._bindEvents();
+    /**
+     * Get resource configuration
+     */
+    getResourceConfig() {
+        return {
+            extensions: ['.scene', '.json'],
+            maxSize: 100 * 1024 * 1024, // 100MB
+        };
     },
 
-    _initComponents() {
-        PreviewPanel.init('scenePreview');
-        Toolbar.init('sceneToolbar');
-        PropertyPanel.init('sceneProperties');
-    },
-
-    _setupTools() {
-        Toolbar.addTool('addObject', {
-            icon: '➕',
-            label: 'Add Object',
-            action: () => this._addObject()
-        });
-
-        Toolbar.addTool('saveScene', {
-            icon: '💾',
-            label: 'Save Scene',
-            action: () => this._saveScene()
+    /**
+     * Handle resource import
+     */
+    async importHandler(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const sceneData = JSON.parse(e.target.result);
+                    // Validate scene data
+                    if (this._validateSceneData(sceneData)) {
+                        resolve(sceneData);
+                    } else {
+                        reject(new Error('Invalid scene data'));
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            reader.onerror = () => reject(new Error('File read failed'));
+            reader.readAsText(file);
         });
     },
 
-    _bindEvents() {
-        window.addEventListener('resize', () => {
-            PreviewPanel.resize();
-        });
+    /**
+     * Handle resource export
+     */
+    async exportHandler(data, filename) {
+        const sceneJson = JSON.stringify(data, null, 2);
+        const blob = new Blob([sceneJson], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
     },
 
-    cleanup() {
-        PreviewPanel.cleanup();
-        Toolbar.cleanup();
-        PropertyPanel.cleanup();
-    },
-
-    // Editor specific methods
-    _addObject() {
-        console.log('Add object to scene');
-    },
-
-    _saveScene() {
-        console.log('Save scene');
+    /**
+     * Validate scene data
+     * @private
+     */
+    _validateSceneData(data) {
+        // Implement scene data validation
+        return true;
     }
 }; 
