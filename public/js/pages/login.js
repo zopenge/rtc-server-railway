@@ -12,6 +12,12 @@
         document.querySelector('label[for="registerPassword"]').textContent = i18n.t('auth.password');
         document.querySelector('label[for="confirmPassword"]').textContent = i18n.t('auth.confirmPassword');
         document.querySelector('#registerForm button').textContent = i18n.t('auth.registerButton');
+
+        // Update MetaMask button text
+        const metamaskButtonText = document.getElementById('metamaskButtonText');
+        if (metamaskButtonText) {
+            metamaskButtonText.textContent = i18n.t('auth.connectWithMetaMask');
+        }
     }
 
     // Initialize tab functionality
@@ -107,6 +113,70 @@
         });
     }
 
+    async function handleMetaMaskLogin() {
+        // Check if MetaMask is installed
+        if (typeof window.ethereum === 'undefined') {
+            showError('metamaskError', i18n.t('auth.metamaskNotInstalled'));
+            return;
+        }
+
+        try {
+            // Request account access
+            const accounts = await window.ethereum.request({ 
+                method: 'eth_requestAccounts' 
+            });
+            const address = accounts[0];
+            
+            // Get the nonce from server
+            const nonceResponse = await fetch('/api/auth/metamask/nonce', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ address })
+            });
+            const { nonce } = await nonceResponse.json();
+
+            // Request signature from user
+            const signature = await window.ethereum.request({
+                method: 'personal_sign',
+                params: [
+                    `Sign this message to verify your identity. Nonce: ${nonce}`,
+                    address
+                ]
+            });
+
+            // Verify signature with backend
+            const verifyResponse = await fetch('/api/auth/metamask/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    address,
+                    signature,
+                    nonce
+                })
+            });
+
+            const result = await verifyResponse.json();
+            if (result.success) {
+                window.location.href = '/';
+            } else {
+                throw new Error(result.error);
+            }
+
+        } catch (error) {
+            showError('metamaskError', error.message);
+        }
+    }
+
+    function showError(elementId, message) {
+        const errorDiv = document.getElementById(elementId);
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
     // Register page lifecycle
     PageLifecycle.register('login', {
         mount: () => {
@@ -114,9 +184,13 @@
             initializeTabs();
             initializeFormHandlers();
             updateTexts();
+            
+            // Add MetaMask login handler
+            document.getElementById('metamaskLogin')?.addEventListener('click', handleMetaMaskLogin);
         },
         unmount: () => {
             window.removeEventListener('textsUpdated', updateTexts);
+            document.getElementById('metamaskLogin')?.removeEventListener('click', handleMetaMaskLogin);
         }
     });
 })(); 

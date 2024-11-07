@@ -101,7 +101,10 @@
             password: "密码",
             loginButton: "登录",
             registerButton: "注册",
-            confirmPassword: "确认密码"
+            confirmPassword: "确认密码",
+            connectWithMetaMask: "连接 MetaMask",
+            metaMaskNotInstalled: "未安装 MetaMask。请安装后继续。",
+            metaMaskError: "MetaMask 出现错误。请重试。"
         }
     };
 

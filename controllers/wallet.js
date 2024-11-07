@@ -1,30 +1,51 @@
 const ethers = require('ethers');
+const userService = require('../services/supabase/user');
 
-// handle metamask verification and login
 async function verifyMetaMaskSignature(req, res) {
     const { address, message, signature } = req.body;
     
     try {
-        // verify signature
+        // Verify the signature
         const recoveredAddress = ethers.verifyMessage(message, signature);
         
         if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
-            return res.status(401).json({ error: 'Invalid signature' });
+            return res.status(401).json({ 
+                success: false, 
+                error: 'Invalid signature' 
+            });
         }
 
-        // link wallet to user account if logged in
-        if (req.session.userId) {
-            await db.linkWalletToUser(req.session.userId, address);
-        } else {
-            // create or get user account for this wallet
-            const user = await db.getUserByWallet(address);
-            req.session.userId = user.id;
+        // Find or create user with this wallet address
+        let user = await userService.getUserByWallet(address);
+        
+        if (!user) {
+            // Create new user with wallet
+            user = await userService.createUser({
+                walletAddress: address,
+                username: `wallet_${address.slice(2, 8)}` // Generate username from address
+            });
         }
 
-        res.json({ success: true });
+        // Set session data
+        req.session.userId = user.id;
+        req.session.walletAddress = address;
+
+        // Return success response
+        res.json({ 
+            success: true,
+            user: {
+                id: user.id,
+                username: user.username,
+                walletAddress: user.walletAddress
+            }
+        });
+
     } catch (error) {
         console.error('Wallet verification failed:', error);
-        res.status(500).json({ error: 'Verification failed' });
+        res.status(500).json({ 
+            success: false, 
+            error: 'Verification failed' 
+        });
     }
 }
 

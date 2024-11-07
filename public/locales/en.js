@@ -101,7 +101,10 @@
             password: "Password",
             loginButton: "Sign In",
             registerButton: "Sign Up",
-            confirmPassword: "Confirm Password"
+            confirmPassword: "Confirm Password",
+            connectWithMetaMask: "Connect with MetaMask",
+            metaMaskNotInstalled: "MetaMask is not installed. Please install it to continue.",
+            metaMaskError: "An error occurred with MetaMask. Please try again."
         }
     };
 

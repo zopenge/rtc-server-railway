@@ -120,6 +120,68 @@ const userService = {
             limit
         };
     },
+
+    // Get user by wallet address
+    async getUserByWallet(walletAddress) {
+        if (!supabase.isEnabled()) {
+            throw new Error('Supabase is not configured');
+        }
+
+        const { data, error } = await supabase.getClient()
+            .from('users')
+            .select('*')
+            .eq('wallet_address', walletAddress.toLowerCase())
+            .single();
+
+        if (error && error.code !== 'PGRST116') { // Not found error
+            throw error;
+        }
+
+        return data;
+    },
+
+    // Create user with optional wallet address
+    async createUserWithWallet(userData) {
+        if (!supabase.isEnabled()) {
+            throw new Error('Supabase is not configured');
+        }
+
+        const client = supabase.getClient();
+        
+        try {
+            // Create user
+            const { data: user, error: userError } = await client
+                .from('users')
+                .insert([{
+                    id: uuidv4(),
+                    username: userData.username,
+                    created_at: new Date().toISOString()
+                }])
+                .select()
+                .single();
+
+            if (userError) throw userError;
+
+            // If wallet address is provided, create wallet record
+            if (userData.walletAddress) {
+                const { error: walletError } = await client
+                    .from('wallets')
+                    .insert([{
+                        id: uuidv4(),
+                        user_id: user.id,
+                        address: userData.walletAddress.toLowerCase(),
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (walletError) throw walletError;
+            }
+
+            return user;
+        } catch (error) {
+            console.error('Error creating user with wallet:', error);
+            throw error;
+        }
+    }
 };
 
 module.exports = userService; 
