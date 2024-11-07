@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace</title>
     <script src="/js/i18n.js"></script>
+    <script src="/js/init.js"></script>
     <script src="/locales/en.js"></script>
     <script src="/locales/zh.js"></script>
     <script src="/js/config/game-icons.js"></script>
@@ -126,54 +127,48 @@
             font-size: 0.9em;
             line-height: 1.5;
         }
+
+        .content-section {
+            display: none;
+            height: 100%;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .game-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-content {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
     <div class="workspace-container">
         <div class="sidebar">
-            <h3 id="sidebarTitle"></h3>
             <nav id="sidebarNav">
                 <ul class="nav-list">
-                    <li id="tasksNav" class="nav-item active">
+                    <li id="tasksNav" class="nav-item" data-view="tasks">
                         <span id="tasksText"></span>
-                        <span class="task-count" id="pendingTaskCount">0</span>
                     </li>
-                    <li id="historyNav" class="nav-item">
-                        <span id="historyText"></span>
-                    </li>
-                    <li id="gamesNav" class="nav-item">
+                    <li id="gamesNav" class="nav-item" data-view="games">
                         <span id="gamesText"></span>
-                        <span class="game-icon">🎮</span>
                     </li>
+                    <!-- other nav items -->
                 </ul>
             </nav>
         </div>
         
         <div class="main-content">
-            <div class="quick-actions">
-                <button class="action-button" id="refreshButton"></button>
-                <button class="action-button" id="settingsButton"></button>
-            </div>
-            
-            <div class="content-grid" id="contentGrid">
-                <div class="task-status">
-                    <div class="status-card">
-                        <h4 id="availableTasksTitle"></h4>
-                        <div class="task-count" id="availableCount">0</div>
-                    </div>
-                    <div class="status-card">
-                        <h4 id="processingTasksTitle"></h4>
-                        <div class="task-count" id="processingCount">0</div>
-                    </div>
-                    <div class="status-card">
-                        <h4 id="completedTasksTitle"></h4>
-                        <div class="task-count" id="completedCount">0</div>
-                    </div>
-                </div>
-                <div id="taskList" class="task-list">
-                    <!-- Tasks will be dynamically loaded here -->
-                </div>
-            </div>
+            <div id="contentGrid"></div>
         </div>
     </div>
 </body>

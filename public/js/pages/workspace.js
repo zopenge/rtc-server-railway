@@ -1,64 +1,66 @@
-(function () {
-    let currentTasks = [];
-    let processingTask = null;
+// Core workspace management
+const Workspace = (function() {
+    // private state
+    const _views = new Map();
+    let _currentView = null;
 
-    async function loadWorkspace() {
-        try {
-            const response = await fetch('/api/user/info');
-            if (!response.ok) {
-                window.location.href = '/login';
-                return;
-            }
-            const userData = await response.json();
-            updateUI(userData);
-        } catch (error) {
-            console.error('Failed to load workspace:', error);
-        }
-    }
-
-    function updateUI(userData) {
-        document.getElementById('sidebarTitle').textContent = i18n.t('workspace.sidebar.title');
-        document.getElementById('tasksText').textContent = i18n.t('workspace.nav.tasks');
-        document.getElementById('historyText').textContent = i18n.t('workspace.nav.history');
-        document.getElementById('gamesText').textContent = i18n.t('workspace.nav.games');
-        document.getElementById('refreshButton').textContent = i18n.t('workspace.actions.refresh');
-        document.getElementById('settingsButton').textContent = i18n.t('workspace.actions.settings');
-        
-        // Add click handler for games nav
-        document.getElementById('gamesNav').addEventListener('click', () => {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.getElementById('gamesNav').classList.add('active');
-            loadGamesView();
+    // private methods
+    function _initializeUI() {
+        // basic UI initialization
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const viewId = e.currentTarget.getAttribute('data-view');
+                if (viewId) {
+                    switchView(viewId);
+                }
+            });
         });
     }
 
-    function loadGamesView() {
-        const contentGrid = document.getElementById('contentGrid');
-        contentGrid.innerHTML = `
-            <div class="game-grid">
-                <div class="game-card" onclick="loadGame('duelCards')">
-                    <div class="game-icon">${getGameIcon(i18n.games.duelCards.iconId)}</div>
-                    <h3 class="game-title">${i18n.games.duelCards.name}</h3>
-                    <p class="game-description">${i18n.games.duelCards.description}</p>
-                </div>
-            </div>
-        `;
-    }
-
-    function loadGame(gameType) {
-        if (gameType === 'duelCards') {
-            window.location.href = '/games/duel-cards';
-        }
-    }
-
-    // Register workspace page lifecycle
-    PageLifecycle.register('workspace', {
-        mount: () => {
-            window.addEventListener('textsUpdated', loadWorkspace);
-            loadWorkspace();
+    // public API
+    return {
+        // register a new view module
+        registerView(viewId, viewModule) {
+            if (_views.has(viewId)) {
+                console.warn(`View ${viewId} is already registered`);
+                return;
+            }
+            _views.set(viewId, viewModule);
         },
-        unmount: () => {
-            window.removeEventListener('textsUpdated', loadWorkspace);
+
+        // switch to a specific view
+        switchView(viewId, params = {}) {
+            const view = _views.get(viewId);
+            if (!view) {
+                console.error(`View ${viewId} not found`);
+                return;
+            }
+
+            // cleanup current view if exists
+            if (_currentView && _views.get(_currentView).cleanup) {
+                _views.get(_currentView).cleanup();
+            }
+
+            // update navigation state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const navItem = document.getElementById(`${viewId}Nav`);
+            if (navItem) navItem.classList.add('active');
+
+            // render new view
+            _currentView = viewId;
+            view.render(params);
+        },
+
+        // initialize workspace
+        init() {
+            _initializeUI();
+            // switch to default view
+            this.switchView('tasks');
         }
-    });
-})(); 
+    };
+})();
+
+// Export to global scope
+window.Workspace = Workspace; 
