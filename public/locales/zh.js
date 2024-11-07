@@ -66,7 +66,24 @@ const zhTranslations = {
         },
         actions: {
             upload: "上传文件",
-            collaborate: "开始协作"
+            collaborate: "开始协作",
+            refresh: "刷新",
+            settings: "设置"
+        },
+        nav: {
+            tasks: "任务",
+            history: "历史",
+            games: "游戏"
+        },
+        tasks: {
+            available: "可用任务",
+            processing: "处理中",
+            completed: "已完成",
+            priority: "优先级",
+            deadline: "截止日期"
+        },
+        games: {
+            title: "游戏中心"
         }
     },
     auth: {
@@ -80,5 +97,15 @@ const zhTranslations = {
     }
 };
 
+const gameConfig = {
+    duelCards: {
+        name: '卡牌对决',
+        description: '策略性卡牌对战游戏',
+        iconId: 'game-cards'  // identifier for the icon
+    }
+    // Future games can be added here
+};
+
 // Register Chinese translations with i18n system
-i18n.register('zh', zhTranslations); 
+i18n.register('zh', zhTranslations);
+i18n.registerGames(gameConfig);

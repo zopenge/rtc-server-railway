@@ -1,4 +1,13 @@
 // English translations
+const gameConfig = {
+    duelCards: {
+        name: 'Duel of Cards',
+        description: 'Strategic card battle game',
+        iconId: 'game-cards'
+    }
+    // Future games can be added here
+};
+
 const enTranslations = {
     nav: {
         login: "Log in",
@@ -66,7 +75,24 @@ const enTranslations = {
         },
         actions: {
             upload: "Upload Files",
-            collaborate: "Start Collaboration"
+            collaborate: "Start Collaboration",
+            refresh: "Refresh",
+            settings: "Settings"
+        },
+        nav: {
+            tasks: "Tasks",
+            history: "History",
+            games: "Games"
+        },
+        tasks: {
+            available: "Available Tasks",
+            processing: "Processing",
+            completed: "Completed",
+            priority: "Priority",
+            deadline: "Deadline"
+        },
+        games: {
+            title: "Game Center"
         }
     },
     auth: {
@@ -81,4 +107,5 @@ const enTranslations = {
 };
 
 // Register English translations with i18n system
-i18n.register('en', enTranslations); 
+i18n.register('en', enTranslations);
+i18n.registerGames(gameConfig);

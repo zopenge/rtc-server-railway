@@ -7,6 +7,8 @@
     <script src="/js/i18n.js"></script>
     <script src="/locales/en.js"></script>
     <script src="/locales/zh.js"></script>
+    <script src="/js/config/game-icons.js"></script>
+    <script src="/js/pages/workspace.js"></script>
     <style>
         .workspace-container {
             padding: 20px;
@@ -60,60 +62,119 @@
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+        }
+        
+        .nav-item.active {
+            background: #e3f2fd;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .game-icon {
+            font-size: 2.5em;
+            margin-bottom: 16px;
+        }
+
+        .game-title {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .game-description {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
     <div class="workspace-container">
         <div class="sidebar">
             <h3 id="sidebarTitle"></h3>
-            <nav id="sidebarNav"></nav>
+            <nav id="sidebarNav">
+                <ul class="nav-list">
+                    <li id="tasksNav" class="nav-item active">
+                        <span id="tasksText"></span>
+                        <span class="task-count" id="pendingTaskCount">0</span>
+                    </li>
+                    <li id="historyNav" class="nav-item">
+                        <span id="historyText"></span>
+                    </li>
+                    <li id="gamesNav" class="nav-item">
+                        <span id="gamesText"></span>
+                        <span class="game-icon">🎮</span>
+                    </li>
+                </ul>
+            </nav>
         </div>
         
         <div class="main-content">
             <div class="quick-actions">
-                <button class="action-button" onclick="location.href='/api/upload'" id="uploadButton"></button>
-                <button class="action-button" onclick="location.href='/rtc'" id="collaborateButton"></button>
+                <button class="action-button" id="refreshButton"></button>
+                <button class="action-button" id="settingsButton"></button>
             </div>
             
             <div class="content-grid" id="contentGrid">
-                <!-- Content will be dynamically loaded here -->
+                <div class="task-status">
+                    <div class="status-card">
+                        <h4 id="availableTasksTitle"></h4>
+                        <div class="task-count" id="availableCount">0</div>
+                    </div>
+                    <div class="status-card">
+                        <h4 id="processingTasksTitle"></h4>
+                        <div class="task-count" id="processingCount">0</div>
+                    </div>
+                    <div class="status-card">
+                        <h4 id="completedTasksTitle"></h4>
+                        <div class="task-count" id="completedCount">0</div>
+                    </div>
+                </div>
+                <div id="taskList" class="task-list">
+                    <!-- Tasks will be dynamically loaded here -->
+                </div>
             </div>
         </div>
     </div>
-
-    <script>
-        async function loadWorkspace() {
-            try {
-                const response = await fetch('/api/user/info');
-                if (!response.ok) {
-                    window.location.href = '/login';
-                    return;
-                }
-                const userData = await response.json();
-                updateUI(userData);
-            } catch (error) {
-                console.error('Failed to load workspace:', error);
-            }
-        }
-
-        function updateUI(userData) {
-            document.getElementById('sidebarTitle').textContent = i18n.t('workspace.sidebar.title');
-            document.getElementById('uploadButton').textContent = i18n.t('workspace.actions.upload');
-            document.getElementById('collaborateButton').textContent = i18n.t('workspace.actions.collaborate');
-            
-            // Additional UI updates based on user data
-        }
-
-        // Register workspace page lifecycle
-        PageLifecycle.register('workspace', {
-            mount: () => {
-                window.addEventListener('textsUpdated', loadWorkspace);
-                loadWorkspace();
-            },
-            unmount: () => {
-                window.removeEventListener('textsUpdated', loadWorkspace);
-            }
-        });
-    </script>
 </body>
 </html> 
