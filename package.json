@@ -21,8 +21,12 @@
   },
   "scripts": {
     "start": "node app.js",
+    "dev": "nodemon app.js",
     "prod:win": "set PROD_ENV=production&&node app.js",
     "push-master": "git push origin master && git push secondary master",
     "merge-to-master": "bash scripts/git-commands.sh merge-to-master"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
