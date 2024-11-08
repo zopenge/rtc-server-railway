@@ -105,9 +105,6 @@ class SupabaseDatabase extends DatabaseInterface {
 
     // handle database session
     async getSession() {
-        if (!this.isEnabled()) {
-            throw new Error('Supabase is not configured');
-        }
         return await this.getClient().auth.getSession();
     }
 }
