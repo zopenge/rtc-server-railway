@@ -1,8 +1,9 @@
 const ethers = require('ethers');
-const userService = require('../services/supabase/user');
+const { getService } = require('../services');
 
 async function verifyMetaMaskSignature(req, res) {
     const { address, message, signature } = req.body;
+    const userService = getService('user');
     
     try {
         // Verify the signature

@@ -1,10 +1,11 @@
-const userService = require('../services/supabase/user');
+const { getService } = require('../services');
 const { SignJWT } = require('jose');
 const config = require('../config');
 
 const userController = {
     // create new user
     async createUser(req, res) {
+        const userService = getService('user');
         const { username, password, userData } = req.body;
         const user = await userService.createUser(username, password, userData);
         res.json({ success: true, user });

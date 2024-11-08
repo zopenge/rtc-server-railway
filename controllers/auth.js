@@ -1,8 +1,10 @@
-const authService = require('../services/supabase/auth');
+const { getService } = require('../services');
 
 const authController = {
     // Sign in with email and password
     async signInWithPassword(req, res) {
+        const authService = getService('auth');
+        
         if (!authService.isEnabled()) {
             return res.status(503).json({
                 success: false,
@@ -23,6 +25,8 @@ const authController = {
 
     // Sign in with github
     async signInWithGithub(req, res) {
+        const authService = getService('auth');
+        
         if (!authService.isEnabled()) {
             return res.status(503).json({
                 success: false,
@@ -41,6 +45,8 @@ const authController = {
 
     // Sign out from database
     async signOut(req, res) {
+        const authService = getService('auth');
+        
         if (!authService.isEnabled()) {
             return res.status(503).json({
                 success: false,

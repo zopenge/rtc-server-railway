@@ -1,11 +1,13 @@
 const multer = require('multer');
-const fileService = require('../../../services/supabase/file');
+const { getService } = require('../../../services');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const handleUpload = async (req, res) => {
     try {
+        const fileService = getService('file');
+
         if (!req.file) {
             throw new Error('No file uploaded');
         }
