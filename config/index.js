@@ -65,8 +65,8 @@ const config = {
     nodeEnv: argv.node_env || getEnvVar('NODE_ENV', 'development'),
     debug: (argv.node_env || getEnvVar('NODE_ENV', 'development')) === 'development',
 
-    // supabase config (optional)
-    supabase: {
+    // database config (optional)
+    database: {
         enabled: !!(argv.supabase_url && argv.supabase_key) || !!(getEnvVar('SUPABASE_URL') && getEnvVar('SUPABASE_KEY')),
         url: argv.supabase_url || getEnvVar('SUPABASE_URL'),
         key: argv.supabase_key || getEnvVar('SUPABASE_KEY')
@@ -92,10 +92,10 @@ console.log('Server configuration:', {
     port: config.port,
     nodeEnv: config.nodeEnv,
     debug: config.debug,
-    supabase: {
-        enabled: config.supabase.enabled,
-        url: config.supabase.enabled ? config.supabase.url : 'not configured',
-        key: config.supabase.enabled ? '***' : 'not configured'
+    database: {
+        enabled: config.database.enabled,
+        url: config.database.enabled ? config.database.url : 'not configured',
+        key: config.database.enabled ? '***' : 'not configured'
     },
     session: {
         secret: '***',  // hide session secret
