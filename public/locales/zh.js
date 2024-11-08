@@ -105,6 +105,54 @@
             connectWithMetaMask: "连接 MetaMask",
             metaMaskNotInstalled: "未安装 MetaMask。请安装后继续。",
             metaMaskError: "MetaMask 出现错误。请重试。"
+        },
+        resume: {
+            title: "简历管理",
+            upload: "上传简历",
+            batchProcess: "批量处理",
+            process: "处理简历",
+            filter: {
+                title: "筛选条件",
+                skills: "技能",
+                experience: "工作经验",
+                education: "教育背景",
+                status: "状态"
+            },
+            status: {
+                pending: "待处理",
+                processing: "处理中",
+                processed: "已处理",
+                failed: "处理失败"
+            },
+            skills: "技能标签",
+            addSkill: "添加技能",
+            removeSkill: "移除",
+            experience: {
+                junior: "初级 (1-3年)",
+                mid: "中级 (3-5年)",
+                senior: "高级 (5年以上)"
+            },
+            education: {
+                bachelor: "本科",
+                master: "硕士",
+                phd: "博士"
+            },
+            actions: {
+                view: "查看",
+                edit: "编辑",
+                delete: "删除",
+                process: "处理",
+                download: "下载"
+            },
+            messages: {
+                processSuccess: "简历处理成功",
+                processFailed: "简历处理失败",
+                uploadSuccess: "简历上传成功",
+                uploadFailed: "简历上传失败",
+                deleteConfirm: "确定要删除这份简历吗？",
+                deleteSuccess: "简历删除成功",
+                deleteFailed: "简历删除失败"
+            }
         }
     };
 

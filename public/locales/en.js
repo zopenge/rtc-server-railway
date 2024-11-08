@@ -105,6 +105,54 @@
             connectWithMetaMask: "Connect with MetaMask",
             metaMaskNotInstalled: "MetaMask is not installed. Please install it to continue.",
             metaMaskError: "An error occurred with MetaMask. Please try again."
+        },
+        resume: {
+            title: "Resume Management",
+            upload: "Upload Resume",
+            batchProcess: "Batch Process",
+            process: "Process Resume",
+            filter: {
+                title: "Filter Options",
+                skills: "Skills",
+                experience: "Experience",
+                education: "Education",
+                status: "Status"
+            },
+            status: {
+                pending: "Pending",
+                processing: "Processing",
+                processed: "Processed",
+                failed: "Failed"
+            },
+            skills: "Skills",
+            addSkill: "Add Skill",
+            removeSkill: "Remove",
+            experience: {
+                junior: "Junior (1-3 years)",
+                mid: "Mid-level (3-5 years)",
+                senior: "Senior (5+ years)"
+            },
+            education: {
+                bachelor: "Bachelor",
+                master: "Master",
+                phd: "PhD"
+            },
+            actions: {
+                view: "View",
+                edit: "Edit",
+                delete: "Delete",
+                process: "Process",
+                download: "Download"
+            },
+            messages: {
+                processSuccess: "Resume processed successfully",
+                processFailed: "Failed to process resume",
+                uploadSuccess: "Resume uploaded successfully",
+                uploadFailed: "Failed to upload resume",
+                deleteConfirm: "Are you sure you want to delete this resume?",
+                deleteSuccess: "Resume deleted successfully",
+                deleteFailed: "Failed to delete resume"
+            }
         }
     };
 

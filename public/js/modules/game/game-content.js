@@ -12,7 +12,7 @@ window.GameContentModule = {
                 </div>
                 <div class="game-content">
                     <iframe 
-                        src="/games/${gameId}" 
+                        src="/game/${gameId}" 
                         frameborder="0" 
                         class="game-frame">
                     </iframe>
