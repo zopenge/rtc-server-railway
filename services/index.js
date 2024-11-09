@@ -1,6 +1,7 @@
 const FileService = require('./file');
 const ResumeService = require('./resume');
 const AIService = require('./ai');
+const UserService = require('./user');
 const SupabaseDatabase = require('./database/supabase');
 
 class ServiceManager {
@@ -15,6 +16,7 @@ class ServiceManager {
         // Then setup other services that depend on database
         await this._setupFile();
         await this._setupResume();
+        await this._setupUser();
         await this._setupAI(config.ai);
     }
 
@@ -41,6 +43,13 @@ class ServiceManager {
             database: this.getService('database')
         });
         this.services.set('resume', resumeService);
+    }
+
+    async _setupUser() {
+        const userService = new UserService({
+            database: this.getService('database')
+        });
+        this.services.set('user', userService);
     }
 
     getService(name) {

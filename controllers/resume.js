@@ -105,10 +105,32 @@ const resumeController = {
         try {
             const resumeService = getService('resume');
             const { id } = req.params;
+            
+            // Validate resume ID
+            if (!id) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Resume ID is required'
+                });
+            }
+
             const result = await resumeService.processResume(id);
             res.json({ success: true, result });
         } catch (error) {
             console.error('Failed to process resume:', error);
+
+            if (error.message === 'Resume not found') {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Resume not found'
+                });
+            }
+            if (error.message.includes('Permission denied')) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Permission denied'
+                });
+            }
             res.status(500).json({ 
                 success: false, 
                 error: 'Failed to process resume' 

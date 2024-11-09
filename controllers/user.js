@@ -5,59 +5,116 @@ const config = require('../config');
 const userController = {
     // create new user
     async createUser(req, res) {
-        const userService = getService('user');
-        const { username, password, userData } = req.body;
-        const user = await userService.createUser(username, password, userData);
-        res.json({ success: true, user });
+        try {
+            const userService = getService('user');
+            const { username, password, userData } = req.body;
+
+            // Validate required fields
+            if (!username || !password) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Username and password are required'
+                });
+            }
+
+            // Validate username format/length if needed
+            if (username.length < 3) {
+                return res.status(400).json({
+                    success: false, 
+                    error: 'Username must be at least 3 characters long'
+                });
+            }
+
+            // Validate password strength if needed
+            if (password.length < 6) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Password must be at least 6 characters long'
+                });
+            }
+
+            const user = await userService.createUser(username, password, userData);
+            
+            // Handle case where user already exists
+            if (!user) {
+                return res.status(409).json({
+                    success: false,
+                    error: 'Username already exists'
+                });
+            }
+
+            res.status(201).json({ success: true, user });
+            
+        } catch (error) {
+            console.error('Error creating user:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
     },
 
     // login
     async login(req, res) {
         try {
+            const userService = getService('user');
             const {
                 username,
                 password,
-                expirationTime = config.jwt.expirationTime, // default: 24 hours
-                issuer = config.jwt.issuer // default issuer name
+                timestamp,
+                nonce,
+                expirationTime = config.jwt.expirationTime,
+                issuer = config.jwt.issuer
             } = req.body;
 
-            const user = await userService.getUser(username, password);
+            // Validate required fields
+            if (!username || !password || !timestamp || !nonce) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Missing required fields'
+                });
+            }
 
-            // create jwt token using jose
+            const { user, loginTime } = await userService.login(username, password, timestamp, nonce);
+
+            // Create JWT token
             const secret = new TextEncoder().encode(config.jwt.secret);
             const token = await new SignJWT({
                 id: user.id,
-                username: user.username
+                username: user.username,
+                loginTime
             })
                 .setProtectedHeader({ alg: config.jwt.algorithm })
-                .setIssuedAt() // set current timestamp
-                .setExpirationTime(expirationTime) // set token expiration time
-                .setIssuer(issuer) // set token issuer
+                .setIssuedAt()
+                .setExpirationTime(expirationTime)
+                .setIssuer(issuer)
                 .sign(secret);
 
-            // convert expiration time to milliseconds for cookie
+            // Set cookie
             const expireInMs = expirationTime.includes('h') 
-                ? parseInt(expirationTime) * 60 * 60 * 1000  // hours to ms
-                : parseInt(expirationTime) * 1000;           // seconds to ms
+                ? parseInt(expirationTime) * 60 * 60 * 1000
+                : parseInt(expirationTime) * 1000;
             
-            // set http only cookie
             res.cookie('token', token, {
-                httpOnly: true,                // prevent XSS attacks
-                secure: config.session.secure, // use secure in production
-                sameSite: 'strict',           // CSRF protection
+                httpOnly: true,
+                secure: config.session.secure,
+                sameSite: 'strict',
                 expires: new Date(Date.now() + expireInMs),
-                path: '/'                      // cookie available for all paths
+                path: '/'
             });
             
-            res.json({ 
-                success: true, 
-                user
-                // token no longer sent in response body
-            });
+            res.json({ success: true, user });
         } catch (error) {
-            res.status(401).json({
+            console.error('Login error:', error);
+            if (error.message === 'User not found' || error.message === 'Invalid password') {
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid credentials'
+                });
+            }
+            res.status(500).json({
                 success: false,
-                error: 'Invalid credentials'
+                error: 'Internal server error'
             });
         }
     },

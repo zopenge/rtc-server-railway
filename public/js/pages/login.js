@@ -1,4 +1,4 @@
-(function() {
+(function () {
     // Function to update all text content
     function updateTexts() {
         document.getElementById('loginTabText').textContent = i18n.t('auth.loginTab');
@@ -6,7 +6,7 @@
         document.getElementById('usernameLabel').textContent = i18n.t('auth.username');
         document.getElementById('passwordLabel').textContent = i18n.t('auth.password');
         document.getElementById('loginButton').textContent = i18n.t('auth.loginButton');
-        
+
         // update register form texts
         document.querySelector('label[for="registerUsername"]').textContent = i18n.t('auth.username');
         document.querySelector('label[for="registerPassword"]').textContent = i18n.t('auth.password');
@@ -48,6 +48,15 @@
         }
     }
 
+    async function createLoginHash(password, timestamp, nonce) {
+        const encoder = new TextEncoder();
+        const combined = encoder.encode(`${password}${timestamp}${nonce}`);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', combined);
+        return Array.from(new Uint8Array(hashBuffer))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    }
+
     // Handle form submissions
     function initializeFormHandlers() {
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -56,12 +65,20 @@
             const password = document.getElementById('loginPassword').value;
 
             try {
+                // Encrypt password with timestamp and nonce
+                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptWithTimestamp(password);
+                
                 const response = await fetch('/user/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({
+                        username,
+                        password: encryptedData,
+                        timestamp,
+                        nonce
+                    })
                 });
 
                 const data = await response.json();
@@ -71,6 +88,7 @@
                     throw new Error(data.error);
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 const errorDiv = document.getElementById('loginError');
                 errorDiv.textContent = error.message || 'Login failed';
                 errorDiv.style.display = 'block';
@@ -91,12 +109,20 @@
             }
 
             try {
+                // Encrypt password with timestamp and nonce
+                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptWithTimestamp(password);
+                
                 const response = await fetch('/user/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({
+                        username,
+                        password: encryptedData,
+                        timestamp,
+                        nonce
+                    })
                 });
 
                 const data = await response.json();
@@ -106,6 +132,7 @@
                     throw new Error(data.error);
                 }
             } catch (error) {
+                console.error('Registration error:', error);
                 const errorDiv = document.getElementById('registerError');
                 errorDiv.textContent = error.message || 'Registration failed';
                 errorDiv.style.display = 'block';
@@ -122,11 +149,11 @@
 
         try {
             // Request account access
-            const accounts = await window.ethereum.request({ 
-                method: 'eth_requestAccounts' 
+            const accounts = await window.ethereum.request({
+                method: 'eth_requestAccounts'
             });
             const address = accounts[0];
-            
+
             // Get the nonce from server
             const nonceResponse = await fetch('/api/auth/metamask/nonce', {
                 method: 'POST',
@@ -184,7 +211,7 @@
             initializeTabs();
             initializeFormHandlers();
             updateTexts();
-            
+
             // Add MetaMask login handler
             document.getElementById('metamaskLogin')?.addEventListener('click', handleMetaMaskLogin);
         },

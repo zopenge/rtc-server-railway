@@ -4,6 +4,9 @@ const crypto = require('node:crypto');
 // generate random secret for session
 const defaultSecret = crypto.randomBytes(32).toString('hex');
 
+// generate random encryption key if not provided
+const defaultEncryptionKey = crypto.randomBytes(32).toString('base64');
+
 // add dotenv config as early as possible
 require('dotenv').config()
 
@@ -44,6 +47,12 @@ const argv = yargs
             type: 'string',
             description: 'JWT secret key',
             default: defaultSecret
+        },
+        'encryption_key': {
+            alias: 'x',
+            type: 'string', 
+            description: 'Encryption key for data encryption/decryption',
+            default: defaultEncryptionKey
         }
     })
     .example('npm run start -- -p 3000')
@@ -86,6 +95,12 @@ const config = {
         algorithm: getEnvVar('JWT_ALGORITHM', 'HS256')
     },
 
+    // encryption config
+    encryption: {
+        key: argv.encryption_key || getEnvVar('ENCRYPTION_KEY', defaultEncryptionKey),
+        algorithm: getEnvVar('ENCRYPTION_ALGORITHM', 'aes-256-gcm')
+    },
+
     // AI configuration
     ai: {
         enabled: !!getEnvVar('AI_API_KEY'),
@@ -117,6 +132,10 @@ console.log('Server configuration:', {
         expirationTime: config.jwt.expirationTime,
         issuer: config.jwt.issuer,
         algorithm: config.jwt.algorithm
+    },
+    encryption: {
+        key: '***',  // hide encryption key
+        algorithm: config.encryption.algorithm
     },
     ai: {
         enabled: config.ai.enabled,

@@ -6,6 +6,15 @@ const walletController = {
     async verifyMetaMaskSignature(req, res) {
         try {
             const { address, message, signature } = req.body;
+            
+            // Validate required fields
+            if (!address || !message || !signature) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Address, message and signature are required'
+                });
+            }
+
             const userService = getService('user');
             
             // Verify the signature
@@ -22,18 +31,24 @@ const walletController = {
             let user = await userService.getUserByWallet(address);
             
             if (!user) {
-                // Create new user with wallet
-                user = await userService.createUserWithWallet({
-                    walletAddress: address,
-                    username: `wallet_${address.slice(2, 8)}` // Generate username from address
-                });
+                try {
+                    user = await userService.createUserWithWallet({
+                        walletAddress: address,
+                        username: `wallet_${address.slice(2, 8)}`
+                    });
+                } catch (createError) {
+                    console.error('Failed to create user:', createError);
+                    return res.status(500).json({
+                        success: false,
+                        error: 'Failed to create user account'
+                    });
+                }
             }
 
             // Set session data
             req.session.userId = user.id;
             req.session.walletAddress = address;
 
-            // Return success response
             res.json({ 
                 success: true,
                 user: {
@@ -45,6 +60,13 @@ const walletController = {
 
         } catch (error) {
             console.error('Wallet verification failed:', error);
+            // 细分错误类型
+            if (error.message.includes('signature')) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Invalid signature format'
+                });
+            }
             res.status(500).json({ 
                 success: false, 
                 error: 'Verification failed' 
