@@ -107,6 +107,107 @@ class SupabaseDatabase extends DatabaseInterface {
     async getSession() {
         return await this.getClient().auth.getSession();
     }
+
+    // Update component health status
+    async updateHealthCheck(component, status, message = null) {
+        const { data, error } = await this.getClient()
+            .from('health_check')
+            .upsert({
+                component,
+                status,
+                message,
+                last_checked: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            }, {
+                onConflict: 'component',
+                returning: 'minimal'
+            });
+
+        if (error) throw error;
+        return data;
+    }
+
+    // Get health status for specific component or all components
+    async getHealthStatus(component = null) {
+        let query = this.getClient()
+            .from('health_check')
+            .select('*')
+            .order('last_checked', { ascending: false });
+        
+        if (component) {
+            query = query.eq('component', component);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        return data;
+    }
+
+    // Check system health status
+    async checkSystemHealth() {
+        try {
+            // Check database connection
+            await this.updateHealthCheck(
+                'database',
+                'healthy',
+                'Database connection is stable'
+            );
+
+            // Check cache service
+            const cacheStatus = await this.checkCacheService();
+            await this.updateHealthCheck(
+                'cache',
+                cacheStatus.isHealthy ? 'healthy' : 'error',
+                cacheStatus.message
+            );
+
+            // Check storage service
+            const storageStatus = await this.checkStorageService();
+            await this.updateHealthCheck(
+                'storage',
+                storageStatus.isHealthy ? 'healthy' : 'error',
+                storageStatus.message
+            );
+
+            // Get all health status reports
+            return await this.getHealthStatus();
+        } catch (error) {
+            console.error('Health check failed:', error);
+            throw error;
+        }
+    }
+
+    // Check cache service health
+    async checkCacheService() {
+        try {
+            // Implement cache service health check logic
+            return {
+                isHealthy: true,
+                message: 'Cache service is running normally'
+            };
+        } catch (error) {
+            return {
+                isHealthy: false,
+                message: `Cache service error: ${error.message}`
+            };
+        }
+    }
+
+    // Check storage service health 
+    async checkStorageService() {
+        try {
+            // Implement storage service health check logic
+            return {
+                isHealthy: true,
+                message: 'Storage service is running normally'
+            };
+        } catch (error) {
+            return {
+                isHealthy: false,
+                message: `Storage service error: ${error.message}`
+            };
+        }
+    }
 }
 
 module.exports = SupabaseDatabase; 

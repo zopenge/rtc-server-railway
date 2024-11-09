@@ -13,7 +13,7 @@ async function setupApp() {
     // setup all components
     await setupServices(config);
     setupMiddleware(app);
-    setupRoutes(app);
+    setupRoutes(app, server);
 
     return { app, server };
 }

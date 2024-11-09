@@ -84,6 +84,17 @@ const config = {
         expirationTime: getEnvVar('JWT_EXPIRATION', '24h'),
         issuer: getEnvVar('JWT_ISSUER', 'unknown'),
         algorithm: getEnvVar('JWT_ALGORITHM', 'HS256')
+    },
+
+    // AI configuration
+    ai: {
+        enabled: !!getEnvVar('AI_API_KEY'),
+        provider: getEnvVar('AI_PROVIDER', 'default'),
+        apiKey: getEnvVar('AI_API_KEY'),
+        options: {
+            maxRetries: parseInt(getEnvVar('AI_MAX_RETRIES', '3')),
+            timeout: parseInt(getEnvVar('AI_TIMEOUT', '30000'))
+        }
     }
 };
 
@@ -106,6 +117,12 @@ console.log('Server configuration:', {
         expirationTime: config.jwt.expirationTime,
         issuer: config.jwt.issuer,
         algorithm: config.jwt.algorithm
+    },
+    ai: {
+        enabled: config.ai.enabled,
+        provider: config.ai.provider,
+        apiKey: config.ai.enabled ? '***' : 'not configured',
+        options: config.ai.options
     }
 });
 

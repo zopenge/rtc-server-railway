@@ -1,7 +1,6 @@
 class ResumeService {
-    constructor({ database, ai }) {
+    constructor({ database }) {
         this.db = database;
-        this.ai = ai;
     }
 
     async getResumes({ page, pageSize, filters }) {
@@ -21,7 +20,9 @@ class ResumeService {
             resume.status = 'processing';
             await resume.save();
 
-            const result = await this.ai.processResume(resume.content);
+            // Get AI service when needed
+            const aiService = require('../index').getService('ai');
+            const result = await aiService.processResume(resume.content);
             
             resume.skills = result.skills;
             resume.experience = result.experience;
