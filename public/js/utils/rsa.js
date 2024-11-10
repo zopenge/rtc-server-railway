@@ -1,87 +1,104 @@
-// Frontend RSA utility class
 class RSAUtil {
-    // Store public key after fetching from server
     static publicKey = null;
 
-    // Fetch public key from server
+    // Fetch and cache the public key
     static async getPublicKey() {
-        if (this.publicKey) {
-            return this.publicKey;
-        }
+        if (this.publicKey) return this.publicKey;
 
         try {
             const response = await fetch('/auth/publicKey');
             const data = await response.json();
 
-            if (!data.success) {
-                throw new Error('Failed to get public key');
-            }
+            if (!data.success) throw new Error('Failed to get public key');
 
-            this.publicKey = data.publicKey;
-            return this.publicKey;
-        } catch (error) {
-            console.error('Error fetching public key:', error);
-            throw error;
-        }
-    }
+            // Decode the PEM formatted public key
+            const binaryDerString = window.atob(data.publicKey.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\n/g, ''));
+            const binaryDer = new Uint8Array([...binaryDerString].map(char => char.charCodeAt(0)));
 
-    // Encrypt data using RSA public key
-    static async encrypt(data) {
-        try {
-            // Get public key if not already cached
-            const publicKey = await this.getPublicKey();
-
-            // Create buffer from data
-            const buffer = Buffer.from(data);
-
-            // Encrypt using public key
-            const encrypted = crypto.publicEncrypt(
-                {
-                    key: publicKey,
-                    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING
-                },
-                buffer
+            // Import the public key as a CryptoKey object
+            this.publicKey = await crypto.subtle.importKey(
+                'spki',
+                binaryDer.buffer,
+                { name: 'RSA-OAEP', hash: { name: 'SHA-256' } },
+                true,
+                ['encrypt']
             );
 
-            // Return base64 encoded encrypted data
-            return encrypted.toString('base64');
+            return this.publicKey;
+        } catch (error) {
+            console.error('Error fetching or importing public key:', error);
+            throw error;
+        }
+    }
+
+    // Encrypt data in chunks
+    static async encrypt(data) {
+        try {
+            const publicKey = await this.getPublicKey();
+
+            // Encode the data as an ArrayBuffer
+            const encodedData = new TextEncoder().encode(data);
+
+            // Set chunk size based on RSA key size minus padding overhead
+            const chunkSize = 190; // 2048-bit key + SHA-256 padding limit
+            const encryptedChunks = [];
+
+            // Encrypt the data in chunks
+            for (let i = 0; i < encodedData.length; i += chunkSize) {
+                const chunk = encodedData.slice(i, i + chunkSize);
+                const encryptedChunk = await crypto.subtle.encrypt(
+                    { name: 'RSA-OAEP' },
+                    publicKey,
+                    chunk
+                );
+                encryptedChunks.push(new Uint8Array(encryptedChunk));
+            }
+
+            // Combine all encrypted chunks into a single Uint8Array
+            const encryptedData = new Uint8Array(encryptedChunks.reduce((acc, chunk) => acc + chunk.length, 0));
+            let offset = 0;
+            for (const chunk of encryptedChunks) {
+                encryptedData.set(chunk, offset);
+                offset += chunk.length;
+            }
+
+            // Convert to Base64
+            return btoa(String.fromCharCode(...encryptedData));
         } catch (error) {
             console.error('Encryption error:', error);
             throw error;
         }
     }
 
-    // Generate random nonce
-    static generateNonce() {
-        return crypto.getRandomValues(new Uint8Array(16))
-            .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
-    }
-
-    // Encrypt data using RSA public key
-    static async encryptWithTimestamp(password) {
+    // Encrypt password with a timestamp and nonce as a JSON object
+    static async encryptPassword(password) {
         try {
-            // Generate timestamp and nonce
-            const timestamp = Date.now();
-            const nonce = this.generateNonce();
+            // Create payload object
+            const payload = {
+                password: await this.encrypt(password),
+                timestamp: Date.now(),
+                nonce: crypto.getRandomValues(new Uint8Array(16))
+                    .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '')
+            };
 
-            // Combine password + timestamp + nonce
-            const combined = `${password}${timestamp}${nonce}`;
+            // Convert payload to JSON string
+            const jsonData = JSON.stringify(payload);
 
-            // Encrypt data
-            const encrypted = await this.encrypt(combined);
+            // Encrypt the JSON string
+            const encryptedData = await this.encrypt(jsonData);
 
-            // Return encrypted data and metadata
             return {
-                encryptedData: encrypted.toString('base64'),
-                timestamp,
-                nonce
+                encryptedData,
+                // Return timestamp and nonce separately for verification
+                timestamp: payload.timestamp,
+                nonce: payload.nonce
             };
         } catch (error) {
-            console.error('Encryption error:', error);
+            console.error('Encryption with timestamp error:', error);
             throw error;
         }
     }
 }
 
-// Export for use in other files
-export default RSAUtil; 
+// Make RSAUtil globally available
+window.RSAUtil = RSAUtil;

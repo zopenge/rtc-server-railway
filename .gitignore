@@ -109,6 +109,9 @@ sessions/
 # Upload files
 uploads/
 
+# Keys
+keys/
+
 # Lock files
 package-lock.json
 pnpm-lock.yaml

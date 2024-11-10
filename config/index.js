@@ -4,9 +4,6 @@ const crypto = require('node:crypto');
 // generate random secret for session
 const defaultSecret = crypto.randomBytes(32).toString('hex');
 
-// generate random encryption key if not provided
-const defaultEncryptionKey = crypto.randomBytes(32).toString('base64');
-
 // add dotenv config as early as possible
 require('dotenv').config()
 
@@ -48,15 +45,19 @@ const argv = yargs
             description: 'JWT secret key',
             default: defaultSecret
         },
-        'encryption_key': {
-            alias: 'x',
-            type: 'string', 
-            description: 'Encryption key for data encryption/decryption',
-            default: defaultEncryptionKey
+        'encryption_public_key': {
+            alias: 'epub',
+            type: 'string',
+            description: 'Public key for encryption (base64 encoded)',
+        },
+        'encryption_private_key': {
+            alias: 'epriv',
+            type: 'string',
+            description: 'Private key for encryption (base64 encoded)',
         }
     })
     .example('npm run start -- -p 3000')
-    .example('npm run start -- -p 3000 -u https://xxx.supabase.co -k your_key -j your_jwt_secret')
+    .example('npm run start -- -p 3000 -u https://xxx.supabase.co -k your_key -epub your_public_key -epriv your_private_key')
     .epilogue('Supabase configuration is optional. If not provided, database features will be disabled.')
     .help()
     .alias('help', 'h')
@@ -97,8 +98,8 @@ const config = {
 
     // encryption config
     encryption: {
-        key: argv.encryption_key || getEnvVar('ENCRYPTION_KEY', defaultEncryptionKey),
-        algorithm: getEnvVar('ENCRYPTION_ALGORITHM', 'aes-256-gcm')
+        publicKey: argv.encryption_public_key || getEnvVar('ENCRYPTION_PUBLIC_KEY'),
+        privateKey: argv.encryption_private_key || getEnvVar('ENCRYPTION_PRIVATE_KEY')
     },
 
     // AI configuration
@@ -134,8 +135,8 @@ console.log('Server configuration:', {
         algorithm: config.jwt.algorithm
     },
     encryption: {
-        key: '***',  // hide encryption key
-        algorithm: config.encryption.algorithm
+        publicKey: config.encryption.publicKey ? '***' : 'not configured',
+        privateKey: '***',  // hide private key
     },
     ai: {
         enabled: config.ai.enabled,

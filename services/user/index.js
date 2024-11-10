@@ -26,11 +26,10 @@ class UserService {
             }
 
             // Hash the password using the utility
-            const encryptedData = await PasswordUtil.encryptPassword(password);
             const { data, error } = await this.db.insert('users', {
                 id: uuidv4(),
                 username: username,
-                password_hash: encryptedData,
+                password_hash: password,
                 ...userData,
                 created_at: new Date().toISOString()
             });
@@ -198,7 +197,8 @@ class UserService {
             }
 
             // Verify password
-            const isPasswordValid = await PasswordUtil.verifyPassword(decryptedPassword, user.password_hash);
+            const { password: decryptedPasswordHash } = await PasswordUtil.decryptPassword(user.password_hash);
+            const isPasswordValid = await PasswordUtil.verifyPassword(decryptedPassword, decryptedPasswordHash);
             if (!isPasswordValid) {
                 throw new Error('Invalid password');
             }

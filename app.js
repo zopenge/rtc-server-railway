@@ -21,7 +21,7 @@ async function setupApp() {
 
     return { app, server };
 }
-
+ 
 async function startServer() {
     try {
         const { app, server } = await setupApp();

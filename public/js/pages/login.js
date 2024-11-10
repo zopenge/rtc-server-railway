@@ -66,7 +66,7 @@
 
             try {
                 // Encrypt password with timestamp and nonce
-                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptWithTimestamp(password);
+                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptPassword(password);
                 
                 const response = await fetch('/user/login', {
                     method: 'POST',
@@ -110,7 +110,7 @@
 
             try {
                 // Encrypt password with timestamp and nonce
-                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptWithTimestamp(password);
+                const { encryptedData, timestamp, nonce } = await RSAUtil.encryptPassword(password);
                 
                 const response = await fetch('/user/register', {
                     method: 'POST',

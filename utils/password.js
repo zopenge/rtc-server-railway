@@ -20,8 +20,7 @@ class PasswordUtil {
         const jsonStr = JSON.stringify(data);
 
         // Get RSA public key and encrypt
-        const publicKey = RSAUtil.getPublicKey();
-        const encrypted = RSAUtil.encrypt(jsonStr, publicKey);
+        const encrypted = await RSAUtil.encrypt(jsonStr);
 
         return encrypted;
     }
@@ -51,10 +50,10 @@ class PasswordUtil {
     }
 
     static async verifyPassword(encryptedPassword1, encryptedPassword2) {
-        const decryptedPassword1 = await this.decryptPassword(encryptedPassword1);
-        const decryptedPassword2 = await this.decryptPassword(encryptedPassword2);
-        
-        return decryptedPassword1.password === decryptedPassword2.password;
+        const decryptedPassword1 = await RSAUtil.decrypt(encryptedPassword1);
+        const decryptedPassword2 = await RSAUtil.decrypt(encryptedPassword2);
+
+        return decryptedPassword1 === decryptedPassword2;
     }
 }
 

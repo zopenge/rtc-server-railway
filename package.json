@@ -23,6 +23,7 @@
     "yargs": "^17.7.2"
   },
   "scripts": {
+    "generate-keys": "node scripts/generate-keys.js",
     "start": "node app.js",
     "dev": "nodemon app.js",
     "prod:win": "set PROD_ENV=production&&node app.js",
