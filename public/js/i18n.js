@@ -2,8 +2,12 @@ class I18n {
     constructor() {
         this.translations = {};
         this.games = {};
-        this.currentLang = this.detectLanguage();
-        this.updateUILanguage(this.currentLang);
+        this._currentLang = this.detectLanguage();
+        this.updateUILanguage(this._currentLang);
+    }
+
+    getCurrentLanguage() {
+        return this._currentLang;
     }
 
     detectLanguage() {
@@ -22,7 +26,7 @@ class I18n {
 
     register(lang, translations) {
         this.translations[lang] = translations;
-        if (lang === this.currentLang) {
+        if (lang === this._currentLang) {
             this.notifyTextsUpdated();
         }
     }
@@ -37,7 +41,7 @@ class I18n {
 
     setLanguage(lang) {
         if (this.translations[lang]) {
-            this.currentLang = lang;
+            this._currentLang = lang;
             this.updateUILanguage(lang);
             this.notifyTextsUpdated();
             return true;
@@ -57,7 +61,7 @@ class I18n {
 
     t(key) {
         const keys = key.split('.');
-        let value = this.translations[this.currentLang];
+        let value = this.translations[this._currentLang];
         
         for (const k of keys) {
             if (value === undefined) break;

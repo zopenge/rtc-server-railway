@@ -86,14 +86,7 @@ const App = (function () {
 
     return {
         init() {
-            // initialize DOM references first
-            content = document.getElementById('content');
-            if (!content) {
-                console.error('Failed to initialize: content element not found');
-                return;
-            }
-
-            // initialize language
+            // initialize language first
             const browserLang = navigator.language.toLowerCase();
             const detectedLang = detectLanguage(browserLang);
             const storedLang = localStorage.getItem('lang');
@@ -103,8 +96,22 @@ const App = (function () {
             i18n.setLanguage(initialLang);
             localStorage.setItem('lang', initialLang);
 
+            content = document.getElementById('content');
+            if (!content) {
+                console.error('Failed to initialize: content element not found');
+                return;
+            }
+
+            // Initialize language selector
+            const langContainer = document.getElementById('langSelectContainer');
+            if (langContainer) {
+                LanguageSelector.init(langContainer);
+            }
+
             // Update UI for initial language
             updateLanguageUI(initialLang);
+            updateNavTexts();
+            loadPage('welcome');
 
             // Listen for language changes
             window.addEventListener('languageChanged', (e) => {
@@ -114,14 +121,8 @@ const App = (function () {
                 updateNavTexts();
             });
 
-            updateNavTexts();
-            loadPage('welcome');
-
             // setup event listeners
             this.setupEventListeners();
-
-            // populate language dropdown
-            populateLangDropdown();
         },
 
         setupEventListeners() {
@@ -219,5 +220,7 @@ function handleBeforeUnload(e) {
     e.returnValue = '';
 }
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => App.init());
+// Wait for DOM to be ready before initializing
+document.addEventListener('DOMContentLoaded', () => {
+    App.init();
+});

@@ -110,19 +110,24 @@
             title: "简历管理",
             upload: "上传简历",
             batchProcess: "批量处理",
-            process: "处理简历",
-            filter: {
+            filters: {
                 title: "筛选条件",
                 skills: "技能",
+                skillsPlaceholder: "输入技能，用逗号分隔",
                 experience: "工作经验",
-                education: "教育背景",
+                education: "学历",
                 status: "状态"
+            },
+            years: "年",
+            education: {
+                bachelor: "本科",
+                master: "硕士",
+                phd: "博士"
             },
             status: {
                 pending: "待处理",
                 processing: "处理中",
-                processed: "已处理",
-                failed: "处理失败"
+                completed: "已完成"
             },
             skills: "技能标签",
             addSkill: "添加技能",
@@ -131,11 +136,6 @@
                 junior: "初级 (1-3年)",
                 mid: "中级 (3-5年)",
                 senior: "高级 (5年以上)"
-            },
-            education: {
-                bachelor: "本科",
-                master: "硕士",
-                phd: "博士"
             },
             actions: {
                 view: "查看",
@@ -153,6 +153,9 @@
                 deleteSuccess: "简历删除成功",
                 deleteFailed: "简历删除失败"
             }
+        },
+        common: {
+            all: "全部"
         }
     };
 

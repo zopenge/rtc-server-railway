@@ -110,19 +110,24 @@
             title: "Resume Management",
             upload: "Upload Resume",
             batchProcess: "Batch Process",
-            process: "Process Resume",
-            filter: {
-                title: "Filter Options",
+            filters: {
+                title: "Filters",
                 skills: "Skills",
+                skillsPlaceholder: "Enter skills, separated by commas",
                 experience: "Experience",
                 education: "Education",
                 status: "Status"
             },
+            years: "years",
+            education: {
+                bachelor: "Bachelor",
+                master: "Master",
+                phd: "PhD"
+            },
             status: {
                 pending: "Pending",
                 processing: "Processing",
-                processed: "Processed",
-                failed: "Failed"
+                completed: "Completed"
             },
             skills: "Skills",
             addSkill: "Add Skill",
@@ -131,11 +136,6 @@
                 junior: "Junior (1-3 years)",
                 mid: "Mid-level (3-5 years)",
                 senior: "Senior (5+ years)"
-            },
-            education: {
-                bachelor: "Bachelor",
-                master: "Master",
-                phd: "PhD"
             },
             actions: {
                 view: "View",
@@ -153,6 +153,9 @@
                 deleteSuccess: "Resume deleted successfully",
                 deleteFailed: "Failed to delete resume"
             }
+        },
+        common: {
+            all: "All"
         }
     };
 
