@@ -38,9 +38,12 @@
     <script src="/js/modules/editors/particle/particle-editor.js"></script>
     
     <!-- Components -->
+    <script src="/js/components/language-selector.js"></script>
+    <script src="/js/components/base-nav.js"></script>
+    <script src="/js/components/user-nav.js"></script>
+    <script src="/js/components/auth-nav.js"></script>
     <script src="/js/components/workspace-nav.js"></script>
     <script src="/js/components/top-nav.js"></script>
-    <script src="/js/components/language-selector.js"></script>
     <script src="/js/components/settings-dialog.js"></script>
     
     <!-- Initialize workspace -->
@@ -51,16 +54,21 @@
     <script src="/js/utils/common.js"></script>
 </head>
 <body>
-    <div id="workspaceNav"></div>
-    <div id="contentGrid" class="content-grid"></div>
+    <div id="navContainer"></div>
+    <div id="content">
+        <div id="workspaceNav"></div>
+        <div id="contentGrid" class="content-grid"></div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize top navigation
-            TopNavigation.init();
+            const topNav = new TopNavigation();
+            topNav.init('navContainer');
             
             // Initialize workspace navigation
-            WorkspaceNavigation.init();
+            const workspaceNav = new WorkspaceNavigation();
+            workspaceNav.init('workspaceNav');
             
             // Initialize workspace modules
             Workspace.init();

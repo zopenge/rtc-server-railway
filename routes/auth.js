@@ -46,4 +46,15 @@ if (config.debug) {
     });
 }
 
+router.get('/status', (req, res) => {
+    // Check the HTTP-only cookie session
+    res.json({
+        authenticated: !!req.session.userId,
+        user: req.session.userId ? {
+            id: req.session.userId,
+            username: req.session.username
+        } : null
+    });
+});
+
 module.exports = router;

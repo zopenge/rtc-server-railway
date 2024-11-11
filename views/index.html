@@ -159,27 +159,18 @@
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-right">
-            <div id="langSelectContainer"></div>
-            <div class="auth-buttons">
-                <button type="button" class="login-btn">
-                    <span id="loginText"></span>
-                </button>
-                <button type="button" class="register-btn">
-                    <span id="registerText"></span>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div id="navContainer"></div>
     <div id="content"></div>
 
-    <script src="/js/page-lifecycle.js"></script>
     <script src="/js/i18n.js"></script>
     <script src="/locales/en.js"></script>
     <script src="/locales/zh.js"></script>
     <script src="/js/utils/rsa.js"></script>
+    <script src="/js/page-lifecycle.js"></script>
     <script src="/js/components/language-selector.js"></script>
+    <script src="/js/components/base-nav.js"></script>
+    <script src="/js/components/user-nav.js"></script>
+    <script src="/js/components/auth-nav.js"></script>
     <script src="/js/app.js"></script>
 </body>
 </html>
