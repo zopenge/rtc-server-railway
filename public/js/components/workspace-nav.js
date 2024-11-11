@@ -36,5 +36,10 @@ window.WorkspaceNavigation = {
                 }
             });
         });
+
+        // Add settings button handler
+        document.getElementById('settingsBtn')?.addEventListener('click', () => {
+            SettingsDialog.show();
+        });
     }
 }; 

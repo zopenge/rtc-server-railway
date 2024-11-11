@@ -156,6 +156,14 @@
         },
         common: {
             all: "全部"
+        },
+        settings: {
+            title: "设置",
+            nickname: "昵称",
+            email: "邮箱",
+            phone: "电话",
+            save: "保存",
+            cancel: "取消"
         }
     };
 
