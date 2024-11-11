@@ -26,14 +26,20 @@ const LanguageSelector = {
 
     _getCurrentFlag() {
         const currentLang = i18n.getCurrentLanguage();
-        return window.App?.SUPPORTED_LANGUAGES[currentLang]?.flag || 'gb';
+        const flags = {
+            en: 'gb',
+            zh: 'cn'
+        };
+        return flags[currentLang] || 'gb';
     },
 
     _renderLanguageOptions() {
-        return Object.entries(window.App?.SUPPORTED_LANGUAGES || {
+        const languages = {
             en: { name: 'English', flag: 'gb' },
             zh: { name: '中文', flag: 'cn' }
-        }).map(([code, lang]) => `
+        };
+        
+        return Object.entries(languages).map(([code, lang]) => `
             <li data-lang="${code}">
                 <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${lang.flag}.svg" 
                      class="flag" alt="${lang.name}">

@@ -2,6 +2,10 @@ class I18n {
     constructor() {
         this.translations = {};
         this.games = {};
+        this.supportedLanguages = {
+            en: { name: 'English', flag: 'gb' },
+            zh: { name: '中文', flag: 'cn' }
+        };
         this._currentLang = this.detectLanguage();
         this.updateUILanguage(this._currentLang);
     }
