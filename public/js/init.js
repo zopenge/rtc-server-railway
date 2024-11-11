@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     Workspace.registerView('resumeList', ResumeListModule);
     Workspace.registerView('resumeEditor', ResumeEditorModule);
 
+    // Register tasks module
+    Workspace.registerView('tasks', TasksModule);
+
     // Initialize workspace
     Workspace.init();
 }); 

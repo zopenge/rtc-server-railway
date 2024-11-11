@@ -5,15 +5,12 @@ const Workspace = (function() {
     let _currentView = null;
 
     // private methods
-    function _initializeUI() {
-        // basic UI initialization
+    function _updateNavigation(viewId) {
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const viewId = e.currentTarget.getAttribute('data-view');
-                if (viewId) {
-                    switchView(viewId);
-                }
-            });
+            item.classList.remove('active');
+            if (item.getAttribute('data-view') === viewId) {
+                item.classList.add('active');
+            }
         });
     }
 
@@ -42,11 +39,7 @@ const Workspace = (function() {
             }
 
             // update navigation state
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            const navItem = document.getElementById(`${viewId}Nav`);
-            if (navItem) navItem.classList.add('active');
+            _updateNavigation(viewId);
 
             // render new view
             _currentView = viewId;
@@ -55,7 +48,6 @@ const Workspace = (function() {
 
         // initialize workspace
         init() {
-            _initializeUI();
             // switch to default view
             this.switchView('tasks');
         }

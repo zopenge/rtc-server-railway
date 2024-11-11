@@ -11,37 +11,49 @@
     <script src="/locales/zh.js"></script>
     <script src="/js/config/game-icons.js"></script>
     
+    <!-- Base styles -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/workspace.css">
+    <link rel="stylesheet" href="/css/tasks.css">
+    <link rel="stylesheet" href="/css/resume.css">
+    <link rel="stylesheet" href="/css/editors.css">
+    
     <!-- Common modules -->
     <script src="/js/modules/common/preview/preview-panel.js"></script>
     <script src="/js/modules/common/toolbar/toolbar.js"></script>
     <script src="/js/modules/common/toolbar/editor-toolbar.js"></script>
     <script src="/js/modules/common/properties/property-panel.js"></script>
     
-    <!-- Resume modules -->
-    <script src="/js/modules/resume/resume-list.js"></script>
+    <!-- Feature modules -->
+    <script src="/js/modules/tasks/tasks.js"></script>
     <script src="/js/modules/resume/resume-filter.js"></script>
+    <script src="/js/modules/resume/resume-list.js"></script>
     <script src="/js/modules/resume/resume-editor.js"></script>
-    
-    <!-- Resume styles -->
-    <link rel="stylesheet" href="/css/resume.css">
-
-    <!-- Game modules -->
     <script src="/js/modules/game/games.js"></script>
     <script src="/js/modules/game/game-content.js"></script>
-    
-    <!-- Editor modules -->
     <script src="/js/modules/editors/model/model-editor.js"></script>
     <script src="/js/modules/editors/scene/scene-editor.js"></script>
     <script src="/js/modules/editors/particle/particle-editor.js"></script>
-
-    <!-- Editor styles -->
-    <link rel="stylesheet" href="/css/editors.css">
+    
+    <!-- Components -->
+    <script src="/js/components/workspace-nav.js"></script>
     
     <!-- Initialize workspace -->
-    <script src="/js/init.js"></script>
     <script src="/js/pages/workspace.js"></script>
+    <script src="/js/init.js"></script>
 </head>
 <body>
-    <!-- ... rest of the body content ... -->
+    <div id="workspaceNav"></div>
+    <div id="contentGrid" class="content-grid"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize navigation
+            WorkspaceNavigation.init();
+            
+            // Initialize workspace modules
+            Workspace.init();
+        });
+    </script>
 </body>
 </html>

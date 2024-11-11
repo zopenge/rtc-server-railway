@@ -83,7 +83,7 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    window.location.href = '/';
+                    window.location.href = '/workspace';
                 } else {
                     throw new Error(data.error);
                 }

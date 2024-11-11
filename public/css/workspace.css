@@ -1,0 +1,55 @@
+.workspace-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background: #f8f9fa;
+    border-right: 1px solid #e9ecef;
+    padding: 20px 0;
+}
+
+.nav-group {
+    margin-bottom: 20px;
+}
+
+.nav-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #e9ecef;
+}
+
+.nav-item.active {
+    background-color: #e9ecef;
+    border-left: 3px solid #007bff;
+}
+
+.content-grid {
+    margin-left: 200px;
+    padding: 20px;
+}
+
+.user-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.user-controls button {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.user-controls button:hover {
+    background: #e9ecef;
+} 
