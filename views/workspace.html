@@ -68,6 +68,9 @@
             const workspaceNav = new WorkspaceNavigation();
             workspaceNav.init('workspaceNav');
             
+            // Initialize settings dialog
+            SettingsDialog.init();
+            
             // Initialize workspace modules
             await Workspace.init();
         });

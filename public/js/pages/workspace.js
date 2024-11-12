@@ -78,26 +78,8 @@ const Workspace = (function() {
                 // Listen for language changes
                 window.addEventListener('languageChanged', _handleLanguageChange);
                 
-                // Initialize all registered views
-                for (const [viewId, view] of _views.entries()) {
-                    if (view.init) {
-                        await view.init();
-                    }
-                }
-
-                // Update all navigation text
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    const viewId = item.getAttribute('data-view');
-                    if (viewId) {
-                        item.textContent = i18n.t(`workspace.nav.${viewId}`);
-                    }
-                });
-
-                // Update settings button text
-                const settingsBtn = document.getElementById('settingsBtn');
-                if (settingsBtn) {
-                    settingsBtn.textContent = i18n.t('workspace.actions.settings');
-                }
+                // Update language immediately
+                _handleLanguageChange();
                 
                 // switch to default view
                 this.switchView('tasks');

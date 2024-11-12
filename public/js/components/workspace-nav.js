@@ -30,9 +30,7 @@ class WorkspaceNavigation extends UserNavigation {
 
     _bindSettingsEvent() {
         document.getElementById('settingsBtn')?.addEventListener('click', () => {
-            // Assuming you have a SettingsDialog component
-            const dialog = new SettingsDialog();
-            dialog.show();
+            SettingsDialog.show();
         });
     }
 

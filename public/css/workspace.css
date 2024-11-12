@@ -86,13 +86,13 @@
 .settings-btn {
     width: 100%;
     padding: 12px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: #1a73e8;
+    border: none;
     border-radius: 6px;
     cursor: pointer;
     text-align: center;
     font-weight: 500;
-    color: #333;
+    color: white;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
@@ -101,9 +101,12 @@
 }
 
 .settings-btn:hover {
-    background: #f8f9fa;
-    border-color: #d0d0d0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: #1557b0;
+    box-shadow: 0 2px 4px rgba(26,115,232,0.2);
+}
+
+.settings-btn:active {
+    transform: translateY(1px);
 }
 
 .settings-btn i {
