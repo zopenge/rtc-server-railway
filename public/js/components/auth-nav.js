@@ -18,10 +18,10 @@ class AuthNavigation extends BaseNavigation {
     _renderAuthButtons() {
         return `
             <div class="auth-buttons">
-                <button type="button" class="login-btn">
+                <button type="button" class="button login-btn">
                     <span id="loginText">${i18n.t('nav.login')}</span>
                 </button>
-                <button type="button" class="register-btn">
+                <button type="button" class="button register-btn">
                     <span id="registerText">${i18n.t('nav.register')}</span>
                 </button>
             </div>

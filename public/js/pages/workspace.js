@@ -14,6 +14,28 @@ const Workspace = (function() {
         });
     }
 
+    function _handleLanguageChange() {
+        // Re-render current view when language changes
+        if (_currentView && _views.get(_currentView)) {
+            const view = _views.get(_currentView);
+            view.render();
+        }
+
+        // Update navigation text
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const viewId = item.getAttribute('data-view');
+            if (viewId) {
+                item.textContent = i18n.t(`workspace.nav.${viewId}`);
+            }
+        });
+
+        // Update settings button text
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            settingsBtn.textContent = i18n.t('workspace.actions.settings');
+        }
+    }
+
     // public API
     return {
         // register a new view module
@@ -48,6 +70,9 @@ const Workspace = (function() {
 
         // initialize workspace
         init() {
+            // Listen for language changes
+            window.addEventListener('languageChanged', _handleLanguageChange);
+            
             // switch to default view
             this.switchView('tasks');
         }
