@@ -2,6 +2,16 @@ const App = (function () {
     let content;
 
     async function loadPage(page) {
+        // Unmount current page if exists
+        if (PageLifecycle.currentPage) {
+            PageLifecycle.unmount(PageLifecycle.currentPage);
+            // Remove old page script if exists
+            const oldScript = document.querySelector(`script[src="/js/pages/${PageLifecycle.currentPage}.js"]`);
+            if (oldScript) {
+                oldScript.remove();
+            }
+        }
+
         try {
             const response = await fetch(`/${page}`);
             if (!response.ok) {
@@ -10,6 +20,7 @@ const App = (function () {
             const html = await response.text();
             content.innerHTML = html;
 
+            // Add this section to load page-specific scripts
             const script = document.createElement('script');
             script.src = `/js/pages/${page}.js`;
             script.onload = () => {
@@ -24,13 +35,18 @@ const App = (function () {
 
     return {
         init() {
+            // Only handle non-workspace pages
+            if (window.location.pathname === '/workspace') {
+                return;
+            }
+
             content = document.getElementById('content');
             if (!content) {
                 console.error('Failed to initialize: content element not found');
                 return;
             }
 
-            // Check authentication status from server instead of localStorage
+            // Check authentication status
             fetch('/auth/status')
                 .then(response => response.json())
                 .then(data => {
@@ -50,20 +66,14 @@ const App = (function () {
                 });
         },
 
-        showLogin() {
-            loadPage('login').catch(() => {
-                history.pushState(null, '', '/');
-                loadPage('welcome');
-            });
-            history.pushState(null, '', '/user/login');
+        async showLogin() {
+            await loadPage('login');
+            window.location.hash = 'login';
         },
 
-        showRegister() {
-            loadPage('login').catch(() => {
-                history.pushState(null, '', '/');
-                loadPage('welcome');
-            });
-            history.pushState(null, '', '/user/register');
+        async showRegister() {
+            await loadPage('login');
+            window.location.hash = 'register';
         }
     };
 })();

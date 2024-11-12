@@ -20,7 +20,7 @@ const userController = {
             // Validate username format/length if needed
             if (username.length < 3) {
                 return res.status(400).json({
-                    success: false, 
+                    success: false,
                     error: 'Username must be at least 3 characters long'
                 });
             }
@@ -34,7 +34,7 @@ const userController = {
             }
 
             const user = await userService.createUser(username, password, userData);
-            
+
             // Handle case where user already exists
             if (!user) {
                 return res.status(409).json({
@@ -44,7 +44,7 @@ const userController = {
             }
 
             res.status(201).json({ success: true, user });
-            
+
         } catch (error) {
             console.error('Error creating user:', error);
             res.status(500).json({
@@ -91,10 +91,10 @@ const userController = {
                 .sign(secret);
 
             // Set cookie
-            const expireInMs = expirationTime.includes('h') 
+            const expireInMs = expirationTime.includes('h')
                 ? parseInt(expirationTime) * 60 * 60 * 1000
                 : parseInt(expirationTime) * 1000;
-            
+
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: config.session.secure,
@@ -102,8 +102,18 @@ const userController = {
                 expires: new Date(Date.now() + expireInMs),
                 path: '/'
             });
-            
-            res.json({ success: true, user });
+
+            // Set session data
+            req.session.userId = user.id;
+            req.session.username = user.username;
+
+            res.json({
+                success: true,
+                user: {
+                    id: user.id,
+                    username: user.username
+                }
+            });
         } catch (error) {
             console.error('Login error:', error);
             if (error.message === 'User not found' || error.message === 'Invalid password') {

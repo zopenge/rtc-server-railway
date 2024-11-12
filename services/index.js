@@ -3,6 +3,7 @@ const ResumeService = require('./resume');
 const AIService = require('./ai');
 const UserService = require('./user');
 const SupabaseDatabase = require('./database/supabase');
+const TaskService = require('./task');
 
 class ServiceManager {
     constructor() {
@@ -17,6 +18,7 @@ class ServiceManager {
         await this._setupFile();
         await this._setupResume();
         await this._setupUser();
+        await this._setupTask();
         await this._setupAI(config.ai);
     }
 
@@ -50,6 +52,13 @@ class ServiceManager {
             database: this.getService('database')
         });
         this.services.set('user', userService);
+    }
+
+    async _setupTask() {
+        const taskService = new TaskService({
+            database: this.getService('database')
+        });
+        this.services.set('task', taskService);
     }
 
     getService(name) {
