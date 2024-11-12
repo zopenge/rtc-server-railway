@@ -24,6 +24,7 @@ const SettingsDialog = {
                     <div class="settings-footer">
                         <button class="save-btn">${i18n.t('settings.save')}</button>
                         <button class="cancel-btn">${i18n.t('settings.cancel')}</button>
+                        <button class="logout-btn">${i18n.t('nav.logout')}</button>
                     </div>
                 </div>
             </div>

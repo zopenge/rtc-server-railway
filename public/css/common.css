@@ -127,24 +127,57 @@ body {
 
 .auth-buttons {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
 }
 
 .auth-buttons button {
-    padding: 8px 16px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    background: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: 100px;
 }
 
-.auth-buttons button:hover {
-    background: #e9ecef;
+.auth-buttons button:first-child {
+    background-color: #fff;
+    color: #1a73e8;
+    border: 1px solid #1a73e8;
+}
+
+.auth-buttons button:last-child {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.auth-buttons button:first-child:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.auth-buttons button:last-child:hover {
+    background-color: #1557b0;
+    box-shadow: 0 2px 4px rgba(26,115,232,0.2);
+}
+
+.auth-buttons button:active {
+    transform: translateY(1px);
 }
 
 /* Add after existing nav styles */
 .nav-auth {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;

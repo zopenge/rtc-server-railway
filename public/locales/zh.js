@@ -10,7 +10,9 @@
     const zhTranslations = {
         nav: {
             login: '登录',
-            register: '注册'
+            register: '注册',
+            title: '工作区平台',
+            logout: '退出登录'
         },
         login: {
             title: '用户登录',
@@ -81,14 +83,16 @@
             nav: {
                 tasks: "任务",
                 history: "历史",
-                games: "游戏"
+                games: "游戏",
+                resumeList: "简历列表"
             },
             tasks: {
                 available: "可用任务",
                 processing: "处理中",
                 completed: "已完成",
                 priority: "优先级",
-                deadline: "截止日期"
+                deadline: "截止日期",
+                title: "任务管理"
             },
             games: {
                 title: "游戏中心"

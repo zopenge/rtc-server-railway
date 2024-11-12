@@ -10,7 +10,9 @@
     const enTranslations = {
         nav: {
             login: "Log in",
-            register: "Sign up"
+            register: "Sign up",
+            title: "Workspace Platform",
+            logout: "Logout"
         },
         login: {
             title: "User Login",
@@ -81,14 +83,16 @@
             nav: {
                 tasks: "Tasks",
                 history: "History",
-                games: "Games"
+                games: "Games",
+                resumeList: "Resume List"
             },
             tasks: {
                 available: "Available Tasks",
                 processing: "Processing",
                 completed: "Completed",
                 priority: "Priority",
-                deadline: "Deadline"
+                deadline: "Deadline",
+                title: "Task Management"
             },
             games: {
                 title: "Game Center"

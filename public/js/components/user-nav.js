@@ -6,12 +6,8 @@ class UserNavigation extends BaseNavigation {
             rightContent: `
                 <div class="user-info">
                     <span id="username">${localStorage.getItem('username') || ''}</span>
-                    <button id="logoutBtn">${i18n.t('nav.logout')}</button>
                 </div>
-            `,
-            events: {
-                '#logoutBtn': () => this.handleLogout()
-            }
+            `
         });
     }
 

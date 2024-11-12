@@ -91,4 +91,18 @@
     background: white;
     border: 1px solid #ddd;
     color: #666;
+}
+
+.logout-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.logout-btn:hover {
+    background: #c82333;
 } 
