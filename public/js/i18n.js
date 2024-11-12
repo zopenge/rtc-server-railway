@@ -6,7 +6,7 @@ class I18n {
             en: { name: 'English', flag: 'gb' },
             zh: { name: '中文', flag: 'cn' }
         };
-        this._currentLang = this.detectLanguage();
+        this._currentLang = this.getSavedLanguage() || this.detectLanguage();
         this.updateUILanguage(this._currentLang);
     }
 
@@ -46,6 +46,7 @@ class I18n {
     setLanguage(lang) {
         if (this.translations[lang]) {
             this._currentLang = lang;
+            localStorage.setItem('preferred_language', lang);
             this.updateUILanguage(lang);
             this.notifyTextsUpdated();
             return true;
@@ -77,6 +78,10 @@ class I18n {
 
     notifyTextsUpdated() {
         window.dispatchEvent(new Event('textsUpdated'));
+    }
+
+    getSavedLanguage() {
+        return localStorage.getItem('preferred_language');
     }
 }
 
