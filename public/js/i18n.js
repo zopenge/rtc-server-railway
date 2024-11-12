@@ -8,6 +8,9 @@ class I18n {
         };
         this._currentLang = this.getSavedLanguage() || this.detectLanguage();
         this.updateUILanguage(this._currentLang);
+        
+        // Load initial translations
+        loadTranslations(this._currentLang);
     }
 
     getCurrentLanguage() {
@@ -43,8 +46,8 @@ class I18n {
         this.notifyTextsUpdated();
     }
 
-    setLanguage(lang) {
-        if (this.translations[lang]) {
+    async setLanguage(lang) {
+        if (await loadTranslations(lang)) {
             this._currentLang = lang;
             localStorage.setItem('preferred_language', lang);
             this.updateUILanguage(lang);

@@ -1,4 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for translations to load
+    const currentLang = i18n.getCurrentLanguage();
+    await loadTranslations(currentLang);
+
     // Only initialize workspace on workspace page
     if (window.location.pathname === '/workspace') {
         // Register modules

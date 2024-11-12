@@ -6,9 +6,8 @@
     <title>Workspace</title>
 
     <!-- Core libraries -->
+    <script src="/js/i18n-loader.js"></script>
     <script src="/js/i18n.js"></script>
-    <script src="/locales/en.js"></script>
-    <script src="/locales/zh.js"></script>
     <script src="/js/config/game-icons.js"></script>
     
     <!-- Base styles -->
@@ -60,7 +59,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Initialize top navigation
             const topNav = new TopNavigation();
             topNav.init('navContainer');
@@ -70,7 +69,7 @@
             workspaceNav.init('workspaceNav');
             
             // Initialize workspace modules
-            Workspace.init();
+            await Workspace.init();
         });
     </script>
 </body>
