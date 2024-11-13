@@ -1,5 +1,5 @@
 // Core workspace management
-const Workspace = (function() {
+const Workspace = (function () {
     // private state
     const _views = new Map();
     let _currentView = null;
@@ -80,13 +80,13 @@ const Workspace = (function() {
                 // Wait for translations to be loaded
                 const currentLang = i18n.getCurrentLanguage();
                 await i18n.loadTranslations(currentLang);
-                
+
                 // Listen for language changes
                 window.addEventListener('languageChanged', _handleLanguageChange);
-                
+
                 // Update language immediately
                 _handleLanguageChange();
-                
+
                 // switch to default view
                 this.switchView('tasks');
             } catch (error) {
@@ -97,4 +97,36 @@ const Workspace = (function() {
 })();
 
 // Export to global scope
-window.Workspace = Workspace; 
+window.Workspace = Workspace;
+
+// Initialize on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', async () => {
+    // Only initialize workspace on workspace page
+    if (window.location.pathname !== '/workspace') {
+        return;
+    }
+
+    // Initialize top navigation
+    const topNav = new TopNavigation();
+    topNav.init('navContainer');
+
+    // Initialize workspace navigation
+    const workspaceNav = new WorkspaceNavigation();
+    workspaceNav.init('workspaceNav');
+
+    // Initialize settings dialog
+    SettingsDialog.init();
+
+    // Register modules
+    Workspace.registerView('games', GamesModule);
+    Workspace.registerView('gameContent', GameContentModule);
+    Workspace.registerView('modelEditor', ModelEditorModule);
+    Workspace.registerView('sceneEditor', SceneEditorModule);
+    Workspace.registerView('particleEditor', ParticleEditorModule);
+    Workspace.registerView('resumeList', ResumeListModule);
+    Workspace.registerView('resumeEditor', ResumeEditorModule);
+    Workspace.registerView('tasks', TasksModule);
+
+    // Initialize workspace modules
+    await Workspace.init();
+});

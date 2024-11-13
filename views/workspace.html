@@ -45,7 +45,6 @@
     
     <!-- Initialize workspace -->
     <script src="/js/pages/workspace.js"></script>
-    <script src="/js/init.js"></script>
 
     <!-- Add this before other module scripts -->
     <script src="/js/utils/common.js"></script>
@@ -56,23 +55,5 @@
         <div id="workspaceNav"></div>
         <div id="contentGrid" class="content-grid"></div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize top navigation
-            const topNav = new TopNavigation();
-            topNav.init('navContainer');
-            
-            // Initialize workspace navigation
-            const workspaceNav = new WorkspaceNavigation();
-            workspaceNav.init('workspaceNav');
-            
-            // Initialize settings dialog
-            SettingsDialog.init();
-            
-            // Initialize workspace modules
-            await Workspace.init();
-        });
-    </script>
 </body>
 </html>
