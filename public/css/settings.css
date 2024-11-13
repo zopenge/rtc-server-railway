@@ -125,16 +125,8 @@
 
 .tab-btn.active {
     color: #1890ff;
-}
-
-.tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #1890ff;
+    background: #e6f7ff;
+    font-weight: bold;
 }
 
 .tab-content {
@@ -191,13 +183,5 @@
 .settings-sidebar .tab-btn.active {
     color: #1890ff;
     background: #e6f7ff;
-    border-right: 2px solid #1890ff;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
+    font-weight: bold;
 } 

@@ -46,11 +46,11 @@ const SettingsDialog = {
             return template.replace(/\${([^}]*)}/g, (match, key) => {
                 if (key.startsWith('i18n.t(')) {
                     // Handle i18n translations
-                    const translationKey = key.slice(8, -1); // Remove i18n.t(' and ')
+                    const translationKey = key.slice(8, -2); // Remove i18n.t(' and ')
                     return i18n.t(translationKey);
                 } else if (key.startsWith('localStorage.getItem(')) {
                     // Handle localStorage values
-                    const storageKey = key.slice(21, -1); // Remove localStorage.getItem(' and ')
+                    const storageKey = key.slice(22, -2); // Remove localStorage.getItem(' and ')
                     return localStorage.getItem(storageKey) || '';
                 }
                 return match;
