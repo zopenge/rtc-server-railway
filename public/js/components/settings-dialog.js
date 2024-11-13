@@ -1,14 +1,14 @@
 const SettingsDialog = {
     _currentTab: 'basic',
 
-    init() {
+    async init() {
         if (document.querySelector('.settings-dialog')) {
             return;
         }
         
         const dialog = document.createElement('div');
         dialog.className = 'settings-dialog';
-        dialog.innerHTML = this.render();
+        dialog.innerHTML = await this.render();
         
         document.body.appendChild(dialog);
         this._bindEvents();
@@ -17,10 +17,10 @@ const SettingsDialog = {
         window.addEventListener('textsUpdated', this._updateTexts.bind(this));
     },
 
-    _updateTexts() {
+    async _updateTexts() {
         const dialog = document.querySelector('.settings-dialog');
         if (dialog) {
-            dialog.innerHTML = this.render();
+            dialog.innerHTML = await this.render();
             this._bindEvents();
         }
     },
@@ -37,64 +37,28 @@ const SettingsDialog = {
         dialog?.classList.remove('show');
     },
 
-    render() {
-        return `
-            <div class="settings-content">
-                <div class="settings-header">
-                    <h2>${i18n.t('settings.title')}</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                <div class="settings-layout">
-                    <div class="settings-sidebar">
-                        <button class="tab-btn active" data-tab="basic">
-                            ${i18n.t('settings.tabs.basic')}
-                        </button>
-                        <button class="tab-btn" data-tab="advanced">
-                            ${i18n.t('settings.tabs.advanced')}
-                        </button>
-                    </div>
-                    <div class="settings-main">
-                        <div class="tab-content active" data-tab="basic">
-                            <div class="form-group">
-                                <label for="nickname">${i18n.t('settings.basic.nickname')}</label>
-                                <input type="text" id="nickname" value="${localStorage.getItem('nickname') || ''}">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">${i18n.t('settings.basic.email')}</label>
-                                <input type="email" id="email" value="${localStorage.getItem('email') || ''}">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">${i18n.t('settings.basic.phone')}</label>
-                                <input type="tel" id="phone" value="${localStorage.getItem('phone') || ''}">
-                            </div>
-                        </div>
-                        <div class="tab-content" data-tab="advanced">
-                            <div class="form-group">
-                                <label for="notifications">${i18n.t('settings.advanced.notifications')}</label>
-                                <select id="notifications">
-                                    <option value="all">${i18n.t('settings.advanced.notifications.all')}</option>
-                                    <option value="important">${i18n.t('settings.advanced.notifications.important')}</option>
-                                    <option value="none">${i18n.t('settings.advanced.notifications.none')}</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>${i18n.t('settings.advanced.security')}</label>
-                                <button class="change-password-btn">
-                                    ${i18n.t('settings.advanced.security.changePassword')}
-                                </button>
-                                <button class="logout-btn">
-                                    ${i18n.t('settings.advanced.security.logout')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="settings-footer">
-                    <button class="save-btn">${i18n.t('settings.save')}</button>
-                    <button class="cancel-btn">${i18n.t('settings.cancel')}</button>
-                </div>
-            </div>
-        `;
+    async render() {
+        try {
+            const response = await fetch('/templates/settings-dialog.html');
+            const template = await response.text();
+            
+            // Replace template variables with actual values
+            return template.replace(/\${([^}]*)}/g, (match, key) => {
+                if (key.startsWith('i18n.t(')) {
+                    // Handle i18n translations
+                    const translationKey = key.slice(8, -1); // Remove i18n.t(' and ')
+                    return i18n.t(translationKey);
+                } else if (key.startsWith('localStorage.getItem(')) {
+                    // Handle localStorage values
+                    const storageKey = key.slice(21, -1); // Remove localStorage.getItem(' and ')
+                    return localStorage.getItem(storageKey) || '';
+                }
+                return match;
+            });
+        } catch (error) {
+            console.error('Failed to load settings dialog template:', error);
+            return '';
+        }
     },
 
     _bindEvents() {

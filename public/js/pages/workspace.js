@@ -79,7 +79,7 @@ const Workspace = (function() {
             try {
                 // Wait for translations to be loaded
                 const currentLang = i18n.getCurrentLanguage();
-                await loadTranslations(currentLang);
+                await i18n.loadTranslations(currentLang);
                 
                 // Listen for language changes
                 window.addEventListener('languageChanged', _handleLanguageChange);
