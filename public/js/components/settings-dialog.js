@@ -12,6 +12,17 @@ const SettingsDialog = {
         
         document.body.appendChild(dialog);
         this._bindEvents();
+        
+        // Listen for text updates
+        window.addEventListener('textsUpdated', this._updateTexts.bind(this));
+    },
+
+    _updateTexts() {
+        const dialog = document.querySelector('.settings-dialog');
+        if (dialog) {
+            dialog.innerHTML = this.render();
+            this._bindEvents();
+        }
     },
 
     // Show the settings dialog
@@ -58,13 +69,6 @@ const SettingsDialog = {
                             </div>
                         </div>
                         <div class="tab-content" data-tab="advanced">
-                            <div class="form-group">
-                                <label for="theme">${i18n.t('settings.advanced.theme')}</label>
-                                <select id="theme">
-                                    <option value="light">${i18n.t('settings.advanced.themes.light')}</option>
-                                    <option value="dark">${i18n.t('settings.advanced.themes.dark')}</option>
-                                </select>
-                            </div>
                             <div class="form-group">
                                 <label for="notifications">${i18n.t('settings.advanced.notifications')}</label>
                                 <select id="notifications">
@@ -160,4 +164,5 @@ const SettingsDialog = {
     }
 };
 
-window.SettingsDialog = SettingsDialog; 
+window.SettingsDialog = SettingsDialog;
+ 
