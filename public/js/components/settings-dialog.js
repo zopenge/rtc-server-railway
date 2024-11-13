@@ -1,6 +1,7 @@
 const SettingsDialog = {
+    _currentTab: 'basic',
+
     init() {
-        // Check if dialog already exists
         if (document.querySelector('.settings-dialog')) {
             return;
         }
@@ -13,6 +14,18 @@ const SettingsDialog = {
         this._bindEvents();
     },
 
+    // Show the settings dialog
+    show() {
+        const dialog = document.querySelector('.settings-dialog');
+        dialog?.classList.add('show');
+    },
+
+    // Hide the settings dialog
+    hide() {
+        const dialog = document.querySelector('.settings-dialog');
+        dialog?.classList.remove('show');
+    },
+
     render() {
         return `
             <div class="settings-content">
@@ -20,58 +33,94 @@ const SettingsDialog = {
                     <h2>${i18n.t('settings.title')}</h2>
                     <button class="close-btn">&times;</button>
                 </div>
-                <div class="settings-body">
-                    <div class="form-group">
-                        <label for="nickname">${i18n.t('settings.nickname')}</label>
-                        <input type="text" id="nickname" value="${localStorage.getItem('nickname') || ''}">
+                <div class="settings-layout">
+                    <div class="settings-sidebar">
+                        <button class="tab-btn active" data-tab="basic">
+                            ${i18n.t('settings.tabs.basic')}
+                        </button>
+                        <button class="tab-btn" data-tab="advanced">
+                            ${i18n.t('settings.tabs.advanced')}
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="email">${i18n.t('settings.email')}</label>
-                        <input type="email" id="email" value="${localStorage.getItem('email') || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">${i18n.t('settings.phone')}</label>
-                        <input type="tel" id="phone" value="${localStorage.getItem('phone') || ''}">
+                    <div class="settings-main">
+                        <div class="tab-content active" data-tab="basic">
+                            <div class="form-group">
+                                <label for="nickname">${i18n.t('settings.basic.nickname')}</label>
+                                <input type="text" id="nickname" value="${localStorage.getItem('nickname') || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">${i18n.t('settings.basic.email')}</label>
+                                <input type="email" id="email" value="${localStorage.getItem('email') || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">${i18n.t('settings.basic.phone')}</label>
+                                <input type="tel" id="phone" value="${localStorage.getItem('phone') || ''}">
+                            </div>
+                        </div>
+                        <div class="tab-content" data-tab="advanced">
+                            <div class="form-group">
+                                <label for="theme">${i18n.t('settings.advanced.theme')}</label>
+                                <select id="theme">
+                                    <option value="light">${i18n.t('settings.advanced.themes.light')}</option>
+                                    <option value="dark">${i18n.t('settings.advanced.themes.dark')}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="notifications">${i18n.t('settings.advanced.notifications')}</label>
+                                <select id="notifications">
+                                    <option value="all">${i18n.t('settings.advanced.notifications.all')}</option>
+                                    <option value="important">${i18n.t('settings.advanced.notifications.important')}</option>
+                                    <option value="none">${i18n.t('settings.advanced.notifications.none')}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>${i18n.t('settings.advanced.security')}</label>
+                                <button class="change-password-btn">
+                                    ${i18n.t('settings.advanced.security.changePassword')}
+                                </button>
+                                <button class="logout-btn">
+                                    ${i18n.t('settings.advanced.security.logout')}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="settings-footer">
                     <button class="save-btn">${i18n.t('settings.save')}</button>
                     <button class="cancel-btn">${i18n.t('settings.cancel')}</button>
-                    <button class="logout-btn">${i18n.t('nav.logout')}</button>
                 </div>
             </div>
         `;
     },
 
-    show() {
-        const dialog = document.querySelector('.settings-dialog');
-        dialog?.classList.add('show');
-    },
-
-    hide() {
-        const dialog = document.querySelector('.settings-dialog');
-        dialog?.classList.remove('show');
-    },
-
     _bindEvents() {
         const dialog = document.querySelector('.settings-dialog');
         
-        // Close button
+        // Tab switching
+        dialog?.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.target.dataset.tab;
+                this._switchTab(tab);
+            });
+        });
+
+        // Close button handler
         dialog?.querySelector('.close-btn').addEventListener('click', () => {
             this.hide();
         });
 
-        // Cancel button
+        // Cancel button handler
         dialog?.querySelector('.cancel-btn').addEventListener('click', () => {
             this.hide();
         });
 
-        // Save button
+        // Save button handler
         dialog?.querySelector('.save-btn').addEventListener('click', () => {
             const nickname = document.getElementById('nickname')?.value;
             const email = document.getElementById('email')?.value;
             const phone = document.getElementById('phone')?.value;
 
+            // Save user settings to localStorage
             localStorage.setItem('nickname', nickname || '');
             localStorage.setItem('email', email || '');
             localStorage.setItem('phone', phone || '');
@@ -79,12 +128,35 @@ const SettingsDialog = {
             this.hide();
         });
 
-        // Close when clicking outside
+        // Close dialog when clicking outside
         dialog?.addEventListener('click', (e) => {
             if (e.target === dialog) {
                 this.hide();
             }
         });
+
+        // Logout button handler
+        dialog?.querySelector('.logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = '/';
+        });
+    },
+
+    _switchTab(tab) {
+        const dialog = document.querySelector('.settings-dialog');
+        
+        // Update tab buttons active state
+        dialog?.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tab);
+        });
+
+        // Update tab contents visibility
+        dialog?.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.toggle('active', content.dataset.tab === tab);
+        });
+
+        this._currentTab = tab;
     }
 };
 

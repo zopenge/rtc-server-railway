@@ -151,5 +151,32 @@
     },
     "common": {
         "all": "All"
+    },
+    "settings": {
+        "title": "Settings",
+        "tabs": {
+            "basic": "Basic Info",
+            "advanced": "Advanced",
+            "security": "Security"
+        },
+        "basic": {
+            "nickname": "Nickname",
+            "email": "Email",
+            "phone": "Phone"
+        },
+        "advanced": {
+            "notifications": {
+                "all": "Receive all notifications",
+                "important": "Important notifications only",
+                "none": "Turn off all notifications"
+            },
+            "security": {
+                "changePassword": "Change Password",
+                "twoFactor": "Two-factor Auth",
+                "logout": "Logout"
+            }
+        },
+        "save": "Save",
+        "cancel": "Cancel"
     }
 }

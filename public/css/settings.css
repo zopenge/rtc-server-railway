@@ -105,4 +105,99 @@
 
 .logout-btn:hover {
     background: #c82333;
+}
+
+.settings-tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding: 0 20px;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    position: relative;
+}
+
+.tab-btn.active {
+    color: #1890ff;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1890ff;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.change-password-btn {
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #666;
+}
+
+.change-password-btn:hover {
+    background: #f5f5f5;
+}
+
+.settings-layout {
+    display: flex;
+    min-height: 400px;
+}
+
+.settings-sidebar {
+    width: 200px;
+    border-right: 1px solid #eee;
+    padding: 20px 0;
+}
+
+.settings-main {
+    flex: 1;
+    padding: 20px;
+}
+
+.settings-sidebar .tab-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+}
+
+.settings-sidebar .tab-btn.active {
+    color: #1890ff;
+    background: #e6f7ff;
+    border-right: 2px solid #1890ff;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 } 

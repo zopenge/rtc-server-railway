@@ -154,9 +154,28 @@
     },
     "settings": {
         "title": "设置",
-        "nickname": "昵称",
-        "email": "邮箱",
-        "phone": "电话",
+        "tabs": {
+            "basic": "基本信息",
+            "advanced": "高级设置",
+            "security": "安全设置"
+        },
+        "basic": {
+            "nickname": "昵称",
+            "email": "邮箱",
+            "phone": "电话"
+        },
+        "advanced": {
+            "notifications": {
+                "all": "接收所有通知",
+                "important": "仅接收重要通知",
+                "none": "关闭所有通知"
+            },
+            "security": {
+                "changePassword": "修改密码",
+                "twoFactor": "两步验证",
+                "logout": "退出登录"
+            }
+        },
         "save": "保存",
         "cancel": "取消"
     }
