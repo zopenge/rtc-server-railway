@@ -25,6 +25,10 @@ class WorkspaceNavigation extends UserNavigation {
         });
 
         this._bindNavEvents();
+    }
+
+    _bindCustomEvents() {
+        super._bindCustomEvents();
         this._bindSettingsEvent();
     }
 
