@@ -21,6 +21,12 @@ const Workspace = (function() {
             view.render();
         }
 
+        // Update title
+        const titleElement = document.querySelector('.top-nav h1');
+        if (titleElement) {
+            titleElement.textContent = i18n.t('nav.title');
+        }
+
         // Update navigation text
         document.querySelectorAll('.nav-item').forEach(item => {
             const viewId = item.getAttribute('data-view');

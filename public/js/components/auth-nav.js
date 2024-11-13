@@ -9,7 +9,25 @@ class AuthNavigation extends BaseNavigation {
             }
         });
 
-        this.config.rightContent = this._renderAuthButtons();
+        // Wait for initial translations to load
+        window.addEventListener('textsUpdated', () => {
+            if (!this.config.rightContent) {
+                this.config.rightContent = this._renderAuthButtons();
+                if (this.container) {
+                    const rightContent = this.container.querySelector('.nav-right');
+                    if (rightContent) {
+                        rightContent.innerHTML = `
+                            ${this.renderLanguageSelector()}
+                            ${this.config.rightContent}
+                        `;
+                        // Rebind language selector events after updating content
+                        this._bindLanguageEvents(this.container);
+                        this._bindCustomEvents();
+                    }
+                }
+            }
+            this.updateTexts();
+        });
 
         // Listen for language changes
         window.addEventListener('languageChanged', () => this.updateTexts());
